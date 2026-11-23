@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ZAEM STORE</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;
+  background:#060b14;
+  color:#f4f7fb;
+  font-family:Tahoma,Arial,sans-serif;
+  min-height:100vh;
+}
+header{
+  background:rgba(13,24,41,0.96);
+  padding:14px 16px;
+  border-bottom:2px solid #00e5ff;
+  box-shadow:0 0 18px rgba(0,229,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+.brand h1{
+  margin:0;
+  color:#00e5ff;
+  font-size:19px;
+  letter-spacing:1.2px;
+  text-shadow:0 0 10px rgba(0,229,255,0.45);
+}
+.brand small{color:#9eb3cc;font-size:12px}
+.header-actions{display:flex;align-items:center;gap:6px}
+.back-btn,.logout-btn{
+  background:#152842;
+  color:#fff;
+  border:1px solid #00e5ff;
+  border-radius:10px;
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+  display:none;
+}
+.logout-btn{border-color:#ff4d79;color:#ffb8c9}
+.back-btn.visible,.logout-btn.visible{display:inline-block}
+
+.container{padding:16px;max-width:680px;margin:auto}
+.page{display:none}
+.page.active{display:block;animation:fadeSlide 0.2s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.status-bar{
+  background:#0e1b2d;
+  border:1px solid #233b5c;
+  border-radius:12px;
+  padding:8px 12px;
+  font-size:12px;
+  color:#7ce8b8;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.status-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22ff88;
+  box-shadow:0 0 8px #22ff88;
+  display:inline-block;
+  margin-left:6px;
+}
+
+.auth-card{
+  background:linear-gradient(165deg,#122238 0%,#0b1422 100%);
+  border:1.5px solid #00e5ff;
+  border-radius:20px;
+  padding:22px 18px;
+  margin-top:10px;
+  box-shadow:0 0 22px rgba(0,229,255,0.2);
+}
+.auth-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:16px;
+}
+.auth-tab{
+  background:#15253b;
+  color:#a8bdd6;
+  border:1px solid #2b456b;
+  border-radius:11px;
+  padding:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.auth-tab.active{
+  background:#00e5ff;
+  color:#05101d;
+  border-color:#00e5ff;
+}
+
+.admin-tabs{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-bottom:14px;
+}
+.admin-tab{
+  background:#132237;
+  color:#c8d9ee;
+  border:1px solid #2d4b73;
+  border-radius:12px;
+  padding:11px 8px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  text-align:center;
+}
+.admin-tab.active{
+  background:#22ff88;
+  color:#05150e;
+  border-color:#22ff88;
+  box-shadow:0 0 12px rgba(34,255,136,0.25);
+}
+.admin-section{display:none}
+.admin-section.active{display:block;animation:fadeSlide 0.18s ease}
+
+.home-header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:4px 0 14px 0;
+}
+.home-title{margin:0;font-size:17px;color:#d6e6f8}
+.admin-lock-btn{
+  background:#10291e;
+  color:#22ff88;
+  border:1px solid #22ff88;
+  border-radius:10px;
+  padding:7px 11px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.cats-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+@media (max-width:460px){
+  .cats-grid{grid-template-columns:1fr}
+}
+
+.cat-box{
+  position:relative;
+  background:linear-gradient(165deg,#122238 0%,#0b1422 100%);
+  border:1.5px solid var(--neon,#00e5ff);
+  border-radius:18px;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:0 0 14px var(--neon-glow,rgba(0,229,255,0.22)),0 10px 22px rgba(0,0,0,0.45);
+  transition:transform 0.15s ease;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.cat-box:active{transform:scale(0.97)}
+.neon-top-line{
+  height:4px;
+  width:100%;
+  background:var(--neon,#00e5ff);
+  box-shadow:0 0 12px var(--neon,#00e5ff),0 0 22px var(--neon,#00e5ff);
+}
+.cat-banner{
+  height:106px;
+  width:100%;
+  background:radial-gradient(circle at 70% 35%,var(--neon-soft,rgba(0,229,255,0.2)),rgba(7,13,24,0.92) 78%);
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.cat-banner svg{width:100%;height:100%;display:block}
+.cat-content{padding:14px}
+.cat-content h2{
+  margin:0 0 5px 0;
+  font-size:17px;
+  color:var(--neon,#00e5ff);
+  text-shadow:0 0 8px var(--neon-glow,rgba(0,229,255,0.3));
+}
+.cat-content p{margin:0;color:#b6c7dc;font-size:12.5px;line-height:1.45}
+
+.neon-buy{--neon:#00e5ff;--neon-glow:rgba(0,229,255,0.25);--neon-soft:rgba(0,229,255,0.22)}
+.neon-coins{--neon:#ffd000;--neon-glow:rgba(255,208,0,0.25);--neon-soft:rgba(255,208,0,0.22)}
+.neon-sell{--neon:#22ff88;--neon-glow:rgba(34,255,136,0.25);--neon-soft:rgba(34,255,136,0.22)}
+.neon-complain{--neon:#ff4d79;--neon-glow:rgba(255,77,121,0.25);--neon-soft:rgba(255,77,121,0.22)}
+.neon-chat{--neon:#a855f7;--neon-glow:rgba(168,85,247,0.25);--neon-soft:rgba(168,85,247,0.22)}
+
+.panel{
+  background:#0f1c2e;
+  border:1px solid #243e61;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:16px;
+}
+.panel h2{margin:0 0 12px 0;font-size:17px;color:#00e5ff}
+
+input,textarea,select{
+  width:100%;
+  padding:12px;
+  margin:7px 0;
+  background:#192a42;
+  border:1px solid #335075;
+  border-radius:11px;
+  color:#fff;
+  font-size:14px;
+  font-family:inherit;
+}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#00e5ff}
+
+button{
+  background:#168cff;
+  color:#fff;
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  font-family:inherit;
+}
+button:active{transform:scale(0.98)}
+button:disabled{opacity:0.6;cursor:not-allowed}
+.copy-btn{background:#1b7d4e;margin-top:8px}
+.order-btn{background:linear-gradient(135deg,#168cff,#0b63c7);width:100%;margin-top:10px}
+.sell-btn{background:linear-gradient(135deg,#189e5c,#0e6e3e);width:100%;margin-top:10px}
+.complain-btn{background:linear-gradient(135deg,#e03b66,#a81d42);width:100%;margin-top:10px}
+.chat-btn{background:linear-gradient(135deg,#9333ea,#6b21a8);width:100%;margin-top:10px}
+.accept-btn{background:#1e8e5a;margin-left:6px}
+.reject-btn{background:#b52b35;margin-left:6px}
+.delete{background:#7e222b;margin-top:8px}
+
+.fee-preview{
+  background:#112338;
+  border:1px solid #22ff88;
+  border-radius:11px;
+  padding:10px 12px;
+  margin:8px 0;
+  font-size:13.5px;
+  color:#b6f7d4;
+}
+.fee-preview strong{color:#22ff88}
+
+.offers-box{
+  background:#132136;
+  border:1px solid #2b476e;
+  border-radius:14px;
+  padding:12px;
+  margin-top:10px;
+}
+.offers-box h3{margin:0 0 8px 0;font-size:14px;color:#ffd000}
+.offer-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px 10px;
+  background:#192b45;
+  border-radius:9px;
+  margin-bottom:6px;
+  font-size:13.5px;
+}
+.offer-row:last-child{margin-bottom:0}
+.offer-price{color:#22ff88;font-weight:bold}
+
+.card-item,.order-card,.complaint-card,.listing-req-card,.thread-item{
+  background:#15253b;
+  border:1px solid #294366;
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
+}
+.card-item img,.listing-req-card img{
+  width:100%;
+  height:185px;
+  object-fit:contain;
+  background:#0b1320;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+.proof-img{
+  max-width:100%;
+  max-height:210px;
+  object-fit:contain;
+  border-radius:10px;
+  margin-top:8px;
+  border:1px solid #3a5478;
+}
+.price{color:#00e5ff;font-size:18px;font-weight:bold;margin:6px 0}
+
+.wallet-box{
+  background:#132237;
+  border:1px dashed #00e5ff;
+  border-radius:14px;
+  padding:14px;
+  margin-top:8px;
+}
+.wallet-num{color:#22ff88;font-size:19px;font-weight:bold;margin:6px 0}
+
+.badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:bold;margin-bottom:6px}
+.pending{background:#6b5314;color:#ffd454}
+.accepted{background:#165b3a;color:#6ef2b2}
+.rejected{background:#6e1d24;color:#ff9aa2}
+.open-badge{background:#6e1d36;color:#ff9bb8}
+.resolved-badge{background:#165b3a;color:#6ef2b2}
+.chat-badge{background:#4c1d95;color:#e9d5ff}
+
+.chat-box{
+  background:#0a1320;
+  border:1px solid #2b476e;
+  border-radius:14px;
+  padding:12px;
+  max-height:330px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin:10px 0;
+}
+.msg-bubble{
+  max-width:85%;
+  padding:10px 12px;
+  border-radius:12px;
+  font-size:13.5px;
+  line-height:1.45;
+  word-wrap:break-word;
+}
+.msg-user{
+  align-self:flex-start;
+  background:#193252;
+  border:1px solid #2f5b91;
+  color:#f4f7fb;
+}
+.msg-admin{
+  align-self:flex-end;
+  background:#123829;
+  border:1px solid #22ff88;
+  color:#e8fff4;
+}
+.msg-meta{
+  font-size:11px;
+  color:#a4b8d1;
+  margin-top:4px;
+}
+.chat-send-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.chat-send-row input{margin:0;flex:1}
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.78);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  z-index:50;
+}
+.modal-box{
+  background:#0f1c2e;
+  border:1px solid #00e5ff;
+  border-radius:16px;
+  padding:18px;
+  width:100%;
+  max-width:460px;
+  max-height:88vh;
+  overflow-y:auto;
+}
+small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>ZAEM STORE</h1>
+    <small id="headerSubtitle">جاري الاتصال...</small>
+  </div>
+  <div class="header-actions">
+    <button id="backBtn" class="back-btn" onclick="goHome()">← الرئيسية</button>
+    <button id="logoutBtn" class="logout-btn" onclick="logoutUser()">خروج</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="status-bar">
+    <div><span class="status-dot" id="connDot"></span><span id="connText">متصل بالسحابة (تحديث فوري)</span></div>
+    <span id="onlineCount">الحسابات: 0</span>
+  </div>
+
+  <!-- تسجيل الدخول / إنشاء حساب -->
+  <section id="page-auth" class="page active">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button id="tabLoginBtn" class="auth-tab active" onclick="switchAuthMode('login')">تسجيل الدخول</button>
+        <button id="tabRegisterBtn" class="auth-tab" onclick="switchAuthMode('register')">إنشاء حساب جديد</button>
+      </div>
+
+      <div id="loginForm">
+        <h2 style="margin:0 0 10px 0;color:#00e5ff;font-size:18px">مرحباً بعودتك</h2>
+        <input id="loginIdentifier" placeholder="رقم الهاتف أو البريد الإلكتروني">
+        <input id="loginPassword" type="password" placeholder="كلمة المرور">
+        <button id="loginSubmitBtn" class="order-btn" onclick="handleLogin()">دخول إلى التطبيق</button>
+      </div>
+
+      <div id="registerForm" style="display:none">
+        <h2 style="margin:0 0 10px 0;color:#00e5ff;font-size:18px">إنشاء حساب عميل جديد</h2>
+        <input id="regName" placeholder="الاسم بالكامل">
+        <input id="regIdentifier" placeholder="رقم الهاتف أو البريد الإلكتروني">
+        <input id="regPassword" type="password" placeholder="كلمة المرور (6 أحرف أو أكثر)">
+        <button id="regSubmitBtn" class="order-btn" onclick="handleRegister()">إنشاء الحساب والدخول</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- الصفحة الرئيسية -->
+  <section id="page-home" class="page">
+    <div class="home-header-row">
+      <p class="home-title" id="welcomeBanner">أقسام التطبيق</p>
+      <button class="admin-lock-btn" onclick="openAdminGate()">قسم الإدارة</button>
+    </div>
+
+    <div class="cats-grid">
+      <div class="cat-box neon-buy" onclick="openPage('buy', 'قسم الشراء')">
+        <div class="neon-top-line"></div>
+        <div class="cat-banner">
+          <svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="195" cy="48" r="32" fill="#00e5ff" opacity="0.14"/>
+            <circle cx="176" cy="34" r="9" fill="#e6f7ff"/>
+            <path d="M163 48 Q176 44 189 48 L194 78 L161 78 Z" fill="#00e5ff"/>
+            <path d="M167 78 L156 105 M184 78 L198 102" stroke="#d8f3ff" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="214" cy="96" r="11" fill="#ffffff" stroke="#0b1422" stroke-width="2"/>
+            <polygon points="214,90 219,94 217,100 211,100 209,94" fill="#0b1422"/>
+            <line x1="18" y1="108" x2="140" y2="108" stroke="#00e5ff" stroke-width="2" opacity="0.45"/>
+          </svg>
+        </div>
+        <div class="cat-content">
+          <h2>قسم الشراء</h2>
+          <p>تصفح أحدث الحسابات فوراً وإرسال طلب شراء مع إثبات التحويل.</p>
+        </div>
+      </div>
+
+      <div class="cat-box neon-coins" onclick="openPage('coins', 'قسم شحن الكوينز')">
+        <div class="neon-top-line"></div>
+        <div class="cat-banner">
+          <svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="190" cy="52" r="34" fill="#ffd000" opacity="0.15"/>
+            <circle cx="172" cy="33" r="9" fill="#fff7d6"/>
+            <path d="M159 47 Q172 43 185 47 L189 78 L158 78 Z" fill="#ffd000"/>
+            <path d="M164 78 L153 105 M180 78 L193 104" stroke="#ffeaa0" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="216" cy="40" r="13" fill="#ffd000" stroke="#fff3b8" stroke-width="2"/>
+            <text x="216" y="45" text-anchor="middle" fill="#0b1422" font-size="12" font-weight="bold">C</text>
+            <circle cx="212" cy="97" r="10" fill="#ffffff"/>
+            <line x1="18" y1="108" x2="135" y2="108" stroke="#ffd000" stroke-width="2" opacity="0.45"/>
+          </svg>
+        </div>
+        <div class="cat-content">
+          <h2>قسم شحن الكوينز</h2>
+          <p>باقات أندرويد وعروض اللاعبين والمدربين مع إرفاق إثبات الدفع.</p>
+        </div>
+      </div>
+
+      <div class="cat-box neon-sell" onclick="openPage('sell', 'قسم البيع')">
+        <div class="neon-top-line"></div>
+        <div class="cat-banner">
+          <svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="190" cy="50" r="34" fill="#22ff88" opacity="0.14"/>
+            <circle cx="164" cy="35" r="8.5" fill="#dcffec"/>
+            <path d="M152 48 Q164 44 176 48 L178 78 L150 78 Z" fill="#22ff88"/>
+            <path d="M156 78 L146 105 M171 78 L182 104" stroke="#b8ffd9" stroke-width="4.8" stroke-linecap="round"/>
+            <circle cx="204" cy="39" r="8" fill="#a8f5cc"/>
+            <path d="M193 51 Q204 48 215 51 L217 78 L192 78 Z" fill="#13b863"/>
+            <path d="M198 78 L192 105 M210 78 L222 103" stroke="#85e8b4" stroke-width="4.5" stroke-linecap="round"/>
+            <circle cx="184" cy="98" r="9.5" fill="#ffffff"/>
+            <line x1="18" y1="108" x2="130" y2="108" stroke="#22ff88" stroke-width="2" opacity="0.45"/>
+          </svg>
+        </div>
+        <div class="cat-content">
+          <h2>قسم البيع</h2>
+          <p>اعرض حسابك براحتك ويُرسل كطلب موافقة للإدارة (+60 جنيه تلقائي).</p>
+        </div>
+      </div>
+
+      <div class="cat-box neon-complain" onclick="openPage('complaints', 'قسم الشكاوي')">
+        <div class="neon-top-line"></div>
+        <div class="cat-banner">
+          <svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="190" cy="50" r="34" fill="#ff4d79" opacity="0.15"/>
+            <circle cx="174" cy="35" r="9" fill="#ffe1e9"/>
+            <path d="M161 49 Q174 45 187 49 L190 78 L159 78 Z" fill="#ff4d79"/>
+            <path d="M166 78 L155 105 M182 78 L195 104" stroke="#ffc2d1" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="215" cy="36" r="12" fill="#ff4d79"/>
+            <text x="215" y="41" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold">!</text>
+            <circle cx="212" cy="97" r="10" fill="#ffffff"/>
+            <line x1="18" y1="108" x2="135" y2="108" stroke="#ff4d79" stroke-width="2" opacity="0.45"/>
+          </svg>
+        </div>
+        <div class="cat-content">
+          <h2>قسم الشكاوي</h2>
+          <p>إرسال شكوى أو بلاغ للإدارة مباشرة وسرية.</p>
+        </div>
+      </div>
+
+      <div class="cat-box neon-chat" onclick="openPage('chat', 'المحادثة مع الإدارة')" style="grid-column:1 / -1">
+        <div class="neon-top-line"></div>
+        <div class="cat-content">
+          <h2>المحادثة المباشرة مع الإدارة</h2>
+          <p>تواصل مع الإدارة لتسليم بيانات الحساب أو الكود في الشحن والبيع والشراء.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- صفحة 1: قسم الشراء -->
+  <section id="page-buy" class="page">
+    <div class="panel">
+      <h2>بيانات الدفع</h2>
+      <div class="wallet-box">
+        <div>فودافون كاش:</div>
+        <div class="wallet-num">01277904942</div>
+        <button class="copy-btn" onclick="copyWallet('buyCopyMsg')">نسخ الرقم</button>
+        <small id="buyCopyMsg"></small>
+        <small>مهم: صورة التحويل ليست دليلاً نهائياً؛ يتم التأكيد بعد التحقق من وصول المبلغ بنفسك.</small>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>الحسابات المتاحة (مباشر)</h2>
+      <div id="buyProducts"></div>
+    </div>
+  </section>
+
+  <!-- صفحة 2: قسم شحن الكوينز -->
+  <section id="page-coins" class="page">
+    <div class="panel">
+      <h2>طلب شحن كوينز وعروض اللعبة</h2>
+      <div class="wallet-box">
+        <div>حوّل المبلغ إلى فودافون كاش:</div>
+        <div class="wallet-num">01277904942</div>
+        <button class="copy-btn" onclick="copyWallet('coinsCopyMsg')">نسخ الرقم</button>
+        <small id="coinsCopyMsg"></small>
+      </div>
+
+      <div class="offers-box">
+        <h3>عروض شحن لاعبين ومدربين في اللعبة</h3>
+        <div class="offer-row"><span>سواريز</span><span class="offer-price">70 جنيه</span></div>
+        <div class="offer-row"><span>كاسياس</span><span class="offer-price">150 جنيه</span></div>
+        <div class="offer-row"><span>مدرب مورينهو</span><span class="offer-price">400 جنيه</span></div>
+      </div>
+
+      <label style="display:block;margin-top:12px">اختر الباقة أو العرض:</label>
+      <select id="coinPackage">
+        <optgroup label="أسعار شحن الأندرويد">
+          <option value="500 كوين (أندرويد)" data-price="260 جنيه">500 كوين — 260 جنيه</option>
+          <option value="1000 كوين (أندرويد)" data-price="460 جنيه">1000 كوين — 460 جنيه</option>
+          <option value="2000 كوين (أندرويد)" data-price="850 جنيه">2000 كوين — 850 جنيه</option>
+          <option value="3000 كوين (أندرويد)" data-price="1300 جنيه">3000 كوين — 1300 جنيه</option>
+          <option value="4000 كوين (أندرويد)" data-price="1750 جنيه">4000 كوين — 1750 جنيه</option>
+          <option value="5000 كوين (أندرويد)" data-price="1900 جنيه">5000 كوين — 1900 جنيه</option>
+          <option value="6000 كوين (أندرويد)" data-price="2250 جنيه">6000 كوين — 2250 جنيه</option>
+          <option value="10000 كوين (أندرويد)" data-price="3500 جنيه">10000 كوين — 3500 جنيه</option>
+          <option value="15000 كوين (أندرويد)" data-price="5100 جنيه">15000 كوين — 5100 جنيه</option>
+          <option value="30000 كوين (أندرويد)" data-price="10,000 جنيه">30000 كوين — 10,000 جنيه</option>
+        </optgroup>
+        <optgroup label="عروض لاعبين ومدربين">
+          <option value="عرض سواريز" data-price="70 جنيه">سواريز — 70 جنيه</option>
+          <option value="عرض كاسياس" data-price="150 جنيه">كاسياس — 150 جنيه</option>
+          <option value="عرض مدرب مورينهو" data-price="400 جنيه">مدرب مورينهو — 400 جنيه</option>
+        </optgroup>
+      </select>
+
+      <input id="coinAccountId" placeholder="معرّف الحساب أو وسيلة التواصل">
+      <input id="coinBuyerName" placeholder="اسمك">
+      <label>صورة إثبات التحويل:</label>
+      <input id="coinProofFile" type="file" accept="image/*">
+      <small>حجم الصورة أقل من 500 كيلوبايت.</small>
+      <button id="coinSubmitBtn" class="order-btn" onclick="submitCoinOrder()">إرسال طلب الشحن</button>
+    </div>
+  </section>
+
+  <!-- صفحة 3: قسم البيع -->
+  <section id="page-sell" class="page">
+    <div class="panel">
+      <h2 style="color:#22ff88">اعرض حسابك للبيع (بانتظار موافقة الإدارة)</h2>
+      <input id="sellerName" placeholder="اسمك أو وسيلة تواصلك">
+      <input id="sellAccName" placeholder="اسم الحساب (مثال: حساب بيس 102)">
+      <input id="sellBasePrice" type="number" min="1" placeholder="سعرك المطلوب بالجنيه (مثال: 300)" oninput="updateSellFeePreview()">
+      <div class="fee-preview" id="sellFeePreview">
+        يُضاف تلقائياً <strong>60 جنيه</strong> فوق السعر المطلوب عند العرض — السعر النهائي للعميل: <strong>60 جنيه</strong>
+      </div>
+      <textarea id="sellDescription" placeholder="اكتب تفاصيل الحساب واللاعبين والربط..."></textarea>
+      <label>صورة الحساب:</label>
+      <input id="sellPhoto" type="file" accept="image/*">
+      <small>حجم الصورة أقل من 500 كيلوبايت. سيتم إرسال الحساب كطلب موافقة للإدارة ولن يُنشر إلا بعد القبول.</small>
+      <button id="submitListingBtn" class="sell-btn" onclick="submitListingRequest()">إرسال طلب موافقة العرض</button>
+    </div>
+  </section>
+
+  <!-- صفحة 4: قسم الإدارة -->
+  <section id="page-admin" class="page">
+    <div class="admin-tabs">
+      <button id="adminTabAccounts" class="admin-tab active" onclick="switchAdminSection('accounts')">1. إدارة الحسابات</button>
+      <button id="adminTabOrders" class="admin-tab" onclick="switchAdminSection('orders')">2. الطلبات الواردة</button>
+      <button id="adminTabComplaints" class="admin-tab" onclick="switchAdminSection('complaints')">3. الشكاوى الواردة</button>
+      <button id="adminTabChats" class="admin-tab" onclick="switchAdminSection('chats')">4. محادثات العملاء</button>
+    </div>
+
+    <div id="admin-sec-accounts" class="admin-section active">
+      <div class="panel">
+        <h2 style="color:#ffd000">طلبات عرض الحسابات (بانتظار موافقتك)</h2>
+        <small>أي حساب توافق عليه يُنشر فوراً في قسم الشراء بسعره بعد إضافة 60 جنيه تلقائياً.</small>
+        <div id="listingRequestsArea"></div>
+      </div>
+
+      <div class="panel">
+        <h2 style="color:#00e5ff">إضافة حساب مباشرة من الإدارة</h2>
+        <input id="adminAccName" placeholder="اسم الحساب">
+        <input id="adminBasePrice" type="number" min="1" placeholder="السعر الأساسي بالجنيه (يُضاف عليه +60 تلقائياً)" oninput="updateAdminFeePreview()">
+        <div class="fee-preview" id="adminFeePreview">
+          السعر النهائي بعد إضافة <strong>60 جنيه</strong> تلقائياً: <strong>60 جنيه</strong>
+        </div>
+        <textarea id="adminAccDesc" placeholder="تفاصيل الحساب"></textarea>
+        <label>صورة الحساب:</label>
+        <input id="adminAccPhoto" type="file" accept="image/*">
+        <button id="adminAddBtn" class="order-btn" onclick="addProductFromAdmin()">نشر الحساب فوراً</button>
+      </div>
+
+      <div class="panel">
+        <h2 style="color:#22ff88">الحسابات المنشورة في قسم الشراء</h2>
+        <div id="adminProducts"></div>
+      </div>
+    </div>
+
+    <div id="admin-sec-orders" class="admin-section">
+      <div class="panel">
+        <h2 style="color:#ffd000">الطلبات الواردة (شراء الحسابات والكوينز والعروض)</h2>
+        <small>تحقق من وصول المبلغ بنفسك قبل قبول أو رفض أي طلب.</small>
+        <div id="orders"></div>
+      </div>
+    </div>
+
+    <div id="admin-sec-complaints" class="admin-section">
+      <div class="panel">
+        <h2 style="color:#ff4d79">الشكاوى الواردة</h2>
+        <div id="adminComplaints"></div>
+      </div>
+    </div>
+
+    <div id="admin-sec-chats" class="admin-section">
+      <div class="panel">
+        <h2 style="color:#c084fc">محادثات العملاء</h2>
+        <small>اختر عميلاً لفتح المحادثة والرد عليه أو استلام بيانات الحساب والكود.</small>
+        <div id="adminChatThreads"></div>
+      </div>
+
+      <div class="panel" id="adminActiveChatPanel" style="display:none">
+        <h2 id="adminChatTitle" style="color:#22ff88">محادثة العميل</h2>
+        <div id="adminChatMessages" class="chat-box"></div>
+        <div class="chat-send-row">
+          <input id="adminChatInput" placeholder="اكتب ردك للعميل...">
+          <button class="accept-btn" onclick="sendAdminReply()">إرسال</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- صفحة 5: قسم الشكاوي -->
+  <section id="page-complaints" class="page">
+    <div class="panel">
+      <h2 style="color:#ff4d79">إرسال شكوى أو بلاغ للإدارة</h2>
+      <input id="compName" placeholder="اسمك">
+      <input id="compContact" placeholder="رقم هاتفك أو وسيلة التواصل">
+      <input id="compSubject" placeholder="عنوان الشكوى (مثال: تأخر طلب / مشكلة في حساب)">
+      <textarea id="compDetails" rows="4" placeholder="اكتب تفاصيل الشكوى بوضوح..."></textarea>
+      <small>شكواك تُرسل مباشرة إلى لوحة الإدارة ولا يراها أي مستخدم آخر.</small>
+      <button id="compSubmitBtn" class="complain-btn" onclick="submitComplaint()">إرسال الشكوى</button>
+    </div>
+  </section>
+
+  <!-- صفحة 6: قسم المحادثة المباشرة للعميل -->
+  <section id="page-chat" class="page">
+    <div class="panel">
+      <h2 style="color:#c084fc">المحادثة مع الإدارة</h2>
+      <small>استخدم هذه المحادثة لإرسال بيانات الحساب أو الكود المطلوب عند شحن الكوينز أو البيع والشراء.</small>
+      <select id="userChatContext">
+        <option value="شحن كوينز / عروض">بخصوص شحن كوينز أو عرض</option>
+        <option value="شراء حساب">بخصوص شراء حساب</option>
+        <option value="عرض حساب للبيع">بخصوص عرض حساب للبيع</option>
+        <option value="استفسار عام">استفسار عام</option>
+      </select>
+      <div id="userChatMessages" class="chat-box"></div>
+      <div class="chat-send-row">
+        <input id="userChatInput" placeholder="اكتب رسالتك أو الحساب والكود هنا...">
+        <button class="chat-btn" style="width:auto;margin:0" onclick="sendUserMessage()">إرسال</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- نافذة كلمة سر الأدمن -->
+<div class="modal-backdrop" id="adminAuthModal">
+  <div class="modal-box">
+    <h2 style="color:#22ff88;margin-top:0">دخول قسم الإدارة</h2>
+    <p style="color:#c9d8eb;font-size:14px">هذا القسم خاص بصاحب التطبيق فقط لإدارة طلبات العرض والحسابات والطلبات والشكاوى والمحادثات.</p>
+    <input id="adminPassInput" type="password" placeholder="أدخل كلمة سر الإدارة">
+    <div style="margin-top:12px">
+      <button class="accept-btn" onclick="verifyAdminPass()">دخول</button>
+      <button class="reject-btn" onclick="closeAdminAuthModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة إرسال طلب شراء حساب -->
+<div class="modal-backdrop" id="orderModal">
+  <div class="modal-box">
+    <h2>إرسال طلب شراء</h2>
+    <p id="selectedProductInfo" style="color:#22ff88;font-weight:bold"></p>
+    <p style="margin:6px 0">رقم فودافون كاش: <strong>01277904942</strong></p>
+    <input id="buyerName" placeholder="اسمك">
+    <input id="buyerContact" placeholder="رقم هاتفك أو وسيلة التواصل">
+    <label>صورة إثبات التحويل:</label>
+    <input id="proofFile" type="file" accept="image/*">
+    <small>حجم الصورة أقل من 500 كيلوبايت.</small>
+    <div style="margin-top:12px">
+      <button id="productOrderSubmitBtn" onclick="submitProductOrder()">إرسال الطلب</button>
+      <button class="reject-btn" onclick="closeOrderModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  push,
+  update,
+  remove,
+  onValue
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAgohso3wmhM21h_i2KC05MpU91tbA7EGM",
+  authDomain: "zaem-store.firebaseapp.com",
+  databaseURL: "https://zaem-store-default-rtdb.firebaseio.com",
+  projectId: "zaem-store",
+  storageBucket: "zaem-store.firebasestorage.app",
+  messagingSenderId: "104458963645",
+  appId: "1:104458963645:web:2122d53f0df789c2c785d4",
+  measurementId: "G-4FCCZEPZTJ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const WALLET_NUMBER = "01277904942";
+const ADMIN_PASS = "ZAEM2026";
+const AUTO_MARKUP = 60;
+
+let usersList = [];
+let currentUser = JSON.parse(localStorage.getItem("zaemCurrentUser") || "null");
+let isAdminUnlocked = sessionStorage.getItem("zaemAdminUnlocked") === "true";
+let activeAdminSection = "accounts";
+let items = [];
+let listingRequests = [];
+let orders = [];
+let complaints = [];
+let allChats = {};
+let selectedAdminChatKey = null;
+let activeProductId = null;
+
+function setConnectionUI(connected, label){
+  const dot = document.getElementById("connDot");
+  const txt = document.getElementById("connText");
+  dot.style.background = connected ? "#22ff88" : "#ff4d79";
+  dot.style.boxShadow = connected ? "0 0 8px #22ff88" : "0 0 8px #ff4d79";
+  txt.textContent = label || (connected ? "متصل بالسحابة (تحديث فوري)" : "غير متصل بقاعدة البيانات");
+}
+
+onValue(ref(db, ".info/connected"), (snap)=>{
+  setConnectionUI(Boolean(snap.val()));
+});
+
+onValue(ref(db, "users"), (snap)=>{
+  const val = snap.val() || {};
+  usersList = Object.entries(val).map(([key, u]) => ({ key, ...u }));
+});
+
+onValue(ref(db, "products"), (snap)=>{
+  const val = snap.val() || {};
+  items = Object.entries(val)
+    .map(([key, p]) => ({ key, ...p }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  document.getElementById("onlineCount").textContent = "الحسابات: " + items.length;
+  renderProducts();
+});
+
+onValue(ref(db, "listing_requests"), (snap)=>{
+  const val = snap.val() || {};
+  listingRequests = Object.entries(val)
+    .map(([key, r]) => ({ key, ...r }))
+    .filter(r => r.status !== "approved" && r.status !== "rejected")
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  if(isAdminUnlocked) renderListingRequests();
+});
+
+onValue(ref(db, "orders"), (snap)=>{
+  const val = snap.val() || {};
+  orders = Object.entries(val)
+    .map(([key, o]) => ({ key, ...o }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  if(isAdminUnlocked) renderOrders();
+});
+
+onValue(ref(db, "complaints"), (snap)=>{
+  const val = snap.val() || {};
+  complaints = Object.entries(val)
+    .map(([key, c]) => ({ key, ...c }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  if(isAdminUnlocked) renderComplaints();
+});
+
+onValue(ref(db, "chats"), (snap)=>{
+  allChats = snap.val() || {};
+  renderUserChatMessages();
+  if(isAdminUnlocked){
+    renderAdminChatThreads();
+    renderAdminActiveChat();
+  }
+});
+
+function getUserChatKey(user){
+  if(!user) return "guest";
+  const raw = String(user.identifier || user.id || user.name || "user").toLowerCase();
+  return raw.replace(/[.#$/\[\]]/g, "_");
+}
+
+window.switchAdminSection = function(secKey){
+  activeAdminSection = secKey;
+  document.getElementById("adminTabAccounts").classList.toggle("active", secKey === "accounts");
+  document.getElementById("adminTabOrders").classList.toggle("active", secKey === "orders");
+  document.getElementById("adminTabComplaints").classList.toggle("active", secKey === "complaints");
+  document.getElementById("adminTabChats").classList.toggle("active", secKey === "chats");
+
+  document.getElementById("admin-sec-accounts").classList.toggle("active", secKey === "accounts");
+  document.getElementById("admin-sec-orders").classList.toggle("active", secKey === "orders");
+  document.getElementById("admin-sec-complaints").classList.toggle("active", secKey === "complaints");
+  document.getElementById("admin-sec-chats").classList.toggle("active", secKey === "chats");
+
+  if(secKey === "accounts"){
+    renderListingRequests();
+    renderProducts();
+  } else if(secKey === "orders"){
+    renderOrders();
+  } else if(secKey === "complaints"){
+    renderComplaints();
+  } else if(secKey === "chats"){
+    renderAdminChatThreads();
+    renderAdminActiveChat();
+  }
+};
+
+window.updateSellFeePreview = function(){
+  const base = Number(document.getElementById("sellBasePrice").value) || 0;
+  const finalPrice = base > 0 ? base + AUTO_MARKUP : AUTO_MARKUP;
+  document.getElementById("sellFeePreview").innerHTML =
+    `سعرك: <strong>${base} جنيه</strong> + إضافة تلقائية <strong>${AUTO_MARKUP} جنيه</strong> = السعر النهائي المعروض: <strong>${finalPrice} جنيه</strong>`;
+};
+
+window.updateAdminFeePreview = function(){
+  const base = Number(document.getElementById("adminBasePrice").value) || 0;
+  const finalPrice = base > 0 ? base + AUTO_MARKUP : AUTO_MARKUP;
+  document.getElementById("adminFeePreview").innerHTML =
+    `السعر الأساسي: <strong>${base} جنيه</strong> + إضافة تلقائية <strong>${AUTO_MARKUP} جنيه</strong> = السعر النهائي: <strong>${finalPrice} جنيه</strong>`;
+};
+
+function formatTimeAgo(ts){
+  if(!ts) return "متاح الآن";
+  const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if(diffSec < 60) return "نُشر الآن";
+  const mins = Math.floor(diffSec / 60);
+  if(mins < 60) return `نُشر منذ ${mins} دقيقة`;
+  const hrs = Math.floor(mins / 60);
+  if(hrs < 24) return `نُشر منذ ${hrs} ساعة`;
+  const days = Math.floor(hrs / 24);
+  return `نُشر منذ ${days} يوم`;
+}
+
+setInterval(()=>{
+  if(items.length > 0) renderProducts();
+}, 30000);
+
+window.switchAuthMode = function(mode){
+  const isLogin = mode === "login";
+  document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
+  document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+  document.getElementById("tabLoginBtn").classList.toggle("active", isLogin);
+  document.getElementById("tabRegisterBtn").classList.toggle("active", !isLogin);
+};
+
+window.handleRegister = async function(){
+  const name = document.getElementById("regName").value.trim();
+  const identifier = document.getElementById("regIdentifier").value.trim().toLowerCase();
+  const password = document.getElementById("regPassword").value.trim();
+  const btn = document.getElementById("regSubmitBtn");
+
+  if(!name || !identifier || !password){
+    alert("اكتب الاسم ورقم الهاتف أو الإيميل وكلمة المرور");
+    return;
+  }
+  if(password.length < 6){
+    alert("كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل");
+    return;
+  }
+  if(usersList.some(u => u.identifier === identifier)){
+    alert("هذا الرقم أو الإيميل مسجل بالفعل، سجّل الدخول");
+    switchAuthMode("login");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري إنشاء الحساب...";
+  try{
+    const newUserRef = push(ref(db, "users"));
+    const newUser = {
+      id: Date.now(),
+      name,
+      identifier,
+      password,
+      createdAtTs: Date.now()
+    };
+    await set(newUserRef, newUser);
+    currentUser = { id: newUser.id, name: newUser.name, identifier: newUser.identifier };
+    localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
+    enterApp();
+  } catch(err){
+    alert("تعذر إنشاء الحساب أونلاين، تأكد من الاتصال والإنترنت");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "إنشاء الحساب والدخول";
+  }
+};
+
+window.handleLogin = async function(){
+  const identifier = document.getElementById("loginIdentifier").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  if(!identifier || !password){
+    alert("اكتب رقم الهاتف أو الإيميل وكلمة المرور");
+    return;
+  }
+
+  const found = usersList.find(u => u.identifier === identifier && u.password === password);
+  if(!found){
+    alert("بيانات الدخول غير صحيحة أو الحساب غير مسجل");
+    return;
+  }
+
+  currentUser = { id: found.id, name: found.name, identifier: found.identifier };
+  localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
+  enterApp();
+};
+
+function enterApp(){
+  if(!currentUser) return;
+  document.getElementById("logoutBtn").classList.add("visible");
+  document.getElementById("welcomeBanner").textContent = "أهلاً يا " + currentUser.name + " — اختر القسم";
+  prefillUserFields();
+  goHome();
+}
+
+window.logoutUser = function(){
+  currentUser = null;
+  isAdminUnlocked = false;
+  selectedAdminChatKey = null;
+  sessionStorage.removeItem("zaemAdminUnlocked");
+  localStorage.removeItem("zaemCurrentUser");
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-auth").classList.add("active");
+  document.getElementById("backBtn").classList.remove("visible");
+  document.getElementById("logoutBtn").classList.remove("visible");
+  document.getElementById("headerSubtitle").textContent = "سجّل الدخول للمتابعة";
+};
+
+function prefillUserFields(){
+  if(!currentUser) return;
+  document.getElementById("coinBuyerName").value = currentUser.name;
+  document.getElementById("coinAccountId").value = currentUser.identifier;
+  document.getElementById("sellerName").value = currentUser.name + " (" + currentUser.identifier + ")";
+  document.getElementById("compName").value = currentUser.name;
+  document.getElementById("compContact").value = currentUser.identifier;
+}
+
+window.openAdminGate = function(){
+  if(!currentUser){ logoutUser(); return; }
+  if(isAdminUnlocked){
+    showAdminPage();
+    return;
+  }
+  document.getElementById("adminPassInput").value = "";
+  document.getElementById("adminAuthModal").style.display = "flex";
+};
+
+window.closeAdminAuthModal = function(){
+  document.getElementById("adminAuthModal").style.display = "none";
+};
+
+window.verifyAdminPass = function(){
+  const pass = document.getElementById("adminPassInput").value;
+  if(pass !== ADMIN_PASS){
+    alert("كلمة سر الإدارة غير صحيحة");
+    return;
+  }
+  isAdminUnlocked = true;
+  sessionStorage.setItem("zaemAdminUnlocked", "true");
+  closeAdminAuthModal();
+  showAdminPage();
+};
+
+function showAdminPage(){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-admin").classList.add("active");
+  document.getElementById("headerSubtitle").textContent = "قسم الإدارة";
+  document.getElementById("backBtn").classList.add("visible");
+  switchAdminSection(activeAdminSection);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+window.openPage = function(pageKey, titleText){
+  if(!currentUser){ logoutUser(); return; }
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + pageKey).classList.add("active");
+  document.getElementById("headerSubtitle").textContent = titleText;
+  document.getElementById("backBtn").classList.add("visible");
+  if(pageKey === "chat") renderUserChatMessages();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.goHome = function(){
+  if(!currentUser){ logoutUser(); return; }
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-home").classList.add("active");
+  document.getElementById("headerSubtitle").textContent = "حساب: " + currentUser.name;
+  document.getElementById("backBtn").classList.remove("visible");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.copyWallet = function(msgId){
+  const el = document.getElementById(msgId);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(WALLET_NUMBER).then(()=>{
+      el.textContent = "تم نسخ الرقم: " + WALLET_NUMBER;
+    }).catch(()=>{
+      el.textContent = "الرقم: " + WALLET_NUMBER;
+    });
+  } else {
+    el.textContent = "الرقم: " + WALLET_NUMBER;
+  }
+};
+
+/* إرسال رسالة من العميل للإدارة */
+window.sendUserMessage = async function(){
+  if(!currentUser){ logoutUser(); return; }
+  const inputEl = document.getElementById("userChatInput");
+  const ctxEl = document.getElementById("userChatContext");
+  const text = inputEl.value.trim();
+  if(!text) return;
+
+  const chatKey = getUserChatKey(currentUser);
+  const threadRef = ref(db, "chats/" + chatKey);
+  const msgRef = push(ref(db, "chats/" + chatKey + "/messages"));
+
+  await update(threadRef, {
+    userName: currentUser.name,
+    userContact: currentUser.identifier,
+    lastTopic: ctxEl.value,
+    lastMessage: text,
+    updatedAtTs: Date.now()
+  });
+
+  await set(msgRef, {
+    sender: "user",
+    senderName: currentUser.name,
+    topic: ctxEl.value,
+    text,
+    createdAt: new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" }),
+    createdAtTs: Date.now()
+  });
+
+  inputEl.value = "";
+};
+
+function renderUserChatMessages(){
+  const box = document.getElementById("userChatMessages");
+  if(!box || !currentUser) return;
+  const chatKey = getUserChatKey(currentUser);
+  const thread = allChats[chatKey] || {};
+  const msgs = Object.values(thread.messages || {}).sort((a, b) => (a.createdAtTs || 0) - (b.createdAtTs || 0));
+
+  if(msgs.length === 0){
+    box.innerHTML = `<small style="text-align:center;color:#9eb3cc">ابدأ المحادثة مع الإدارة لإرسال بيانات الحساب أو الكود.</small>`;
+    return;
+  }
+
+  box.innerHTML = msgs.map(m => `
+    <div class="msg-bubble ${m.sender === "admin" ? "msg-admin" : "msg-user"}">
+      <div>${m.text}</div>
+      <div class="msg-meta">${m.sender === "admin" ? "الإدارة" : (m.senderName || "أنت")}${m.topic ? " • " + m.topic : ""} • ${m.createdAt || ""}</div>
+    </div>
+  `).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function renderAdminChatThreads(){
+  const area = document.getElementById("adminChatThreads");
+  if(!area || !isAdminUnlocked) return;
+
+  const threads = Object.entries(allChats)
+    .map(([key, data]) => ({ key, ...data }))
+    .sort((a, b) => (b.updatedAtTs || 0) - (a.updatedAtTs || 0));
+
+  if(threads.length === 0){
+    area.textContent = "لا توجد محادثات من العملاء حتى الآن";
+    return;
+  }
+
+  area.innerHTML = "";
+  threads.forEach(t => {
+    const item = document.createElement("div");
+    item.className = "thread-item";
+    item.innerHTML = `
+      <span class="badge chat-badge">${t.lastTopic || "محادثة"}</span>
+      <h3 style="margin:4px 0">${t.userName || "عميل"} <small style="display:inline;color:#9eb3cc">(${t.userContact || ""})</small></h3>
+      <p style="margin:6px 0;font-size:13.5px;color:#d6e4f5">آخر رسالة: ${t.lastMessage || ""}</p>
+    `;
+    const openBtn = document.createElement("button");
+    openBtn.className = "accept-btn";
+    openBtn.textContent = "فتح المحادثة";
+    openBtn.onclick = ()=>selectAdminChat(t.key);
+    item.append(openBtn);
+    area.append(item);
+  });
+}
+
+function selectAdminChat(chatKey){
+  selectedAdminChatKey = chatKey;
+  document.getElementById("adminActiveChatPanel").style.display = "block";
+  renderAdminActiveChat();
+}
+
+function renderAdminActiveChat(){
+  const panel = document.getElementById("adminActiveChatPanel");
+  const box = document.getElementById("adminChatMessages");
+  const titleEl = document.getElementById("adminChatTitle");
+  if(!panel || !box || !isAdminUnlocked) return;
+
+  if(!selectedAdminChatKey || !allChats[selectedAdminChatKey]){
+    panel.style.display = "none";
+    return;
+  }
+
+  panel.style.display = "block";
+  const thread = allChats[selectedAdminChatKey];
+  titleEl.textContent = `محادثة: ${thread.userName || "عميل"} (${thread.userContact || ""})`;
+
+  const msgs = Object.values(thread.messages || {}).sort((a, b) => (a.createdAtTs || 0) - (b.createdAtTs || 0));
+  if(msgs.length === 0){
+    box.innerHTML = `<small style="text-align:center;color:#9eb3cc">لا توجد رسائل في هذه المحادثة</small>`;
+    return;
+  }
+
+  box.innerHTML = msgs.map(m => `
+    <div class="msg-bubble ${m.sender === "admin" ? "msg-admin" : "msg-user"}">
+      <div>${m.text}</div>
+      <div class="msg-meta">${m.sender === "admin" ? "أنت (الإدارة)" : (m.senderName || "العميل")}${m.topic ? " • " + m.topic : ""} • ${m.createdAt || ""}</div>
+    </div>
+  `).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+window.sendAdminReply = async function(){
+  if(!isAdminUnlocked || !selectedAdminChatKey) return;
+  const inputEl = document.getElementById("adminChatInput");
+  const text = inputEl.value.trim();
+  if(!text) return;
+
+  const threadRef = ref(db, "chats/" + selectedAdminChatKey);
+  const msgRef = push(ref(db, "chats/" + selectedAdminChatKey + "/messages"));
+
+  await update(threadRef, {
+    lastMessage: "الإدارة: " + text,
+    updatedAtTs: Date.now()
+  });
+
+  await set(msgRef, {
+    sender: "admin",
+    senderName: "الإدارة",
+    text,
+    createdAt: new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" }),
+    createdAtTs: Date.now()
+  });
+
+  inputEl.value = "";
+};
+
+/* إرسال طلب عرض حساب من قسم البيع (بانتظار موافقة الإدارة) */
+window.submitListingRequest = async function(){
+  const sellerInfo = document.getElementById("sellerName").value.trim();
+  const name = document.getElementById("sellAccName").value.trim();
+  const basePrice = Number(document.getElementById("sellBasePrice").value);
+  const description = document.getElementById("sellDescription").value.trim();
+  const file = document.getElementById("sellPhoto").files[0];
+  const btn = document.getElementById("submitListingBtn");
+
+  if(!sellerInfo || !name || !basePrice || basePrice < 1 || !description){
+    alert("اكتب بياناتك واسم الحساب والسعر المطلوب والتفاصيل");
+    return;
+  }
+  if(file && file.size > 500000){
+    alert("اختار صورة أقل من 500 كيلوبايت");
+    return;
+  }
+
+  const finalPrice = basePrice + AUTO_MARKUP;
+  btn.disabled = true;
+  btn.textContent = "جاري إرسال طلب الموافقة...";
+
+  const finish = async (photo)=>{
+    try{
+      const reqRef = push(ref(db, "listing_requests"));
+      await set(reqRef, {
+        sellerInfo,
+        name,
+        basePrice,
+        finalPrice,
+        description,
+        photo,
+        status: "pending",
+        createdAt: new Date().toLocaleString("ar-EG"),
+        createdAtTs: Date.now()
+      });
+      document.getElementById("sellAccName").value = "";
+      document.getElementById("sellBasePrice").value = "";
+      document.getElementById("sellDescription").value = "";
+      document.getElementById("sellPhoto").value = "";
+      updateSellFeePreview();
+      alert("تم إرسال طلب عرض الحساب للإدارة، وسيُنشر في قسم الشراء بعد الموافقة");
+    } catch(err){
+      alert("تعذر إرسال الطلب أونلاين، حاول مرة أخرى");
+    } finally{
+      btn.disabled = false;
+      btn.textContent = "إرسال طلب موافقة العرض";
+    }
+  };
+
+  if(file){
+    const reader = new FileReader();
+    reader.onload = ()=>finish(reader.result);
+    reader.readAsDataURL(file);
+  } else {
+    await finish("");
+  }
+};
+
+function renderListingRequests(){
+  const area = document.getElementById("listingRequestsArea");
+  if(!area) return;
+  area.innerHTML = "";
+  if(!isAdminUnlocked) return;
+
+  if(listingRequests.length === 0){
+    area.textContent = "لا توجد طلبات عرض جديدة بانتظار الموافقة";
+    return;
+  }
+
+  listingRequests.forEach(reqItem=>{
+    const card = document.createElement("div");
+    card.className = "listing-req-card";
+    card.innerHTML = `
+      <span class="badge pending">بانتظار الموافقة</span>
+      <h3 style="margin:4px 0">${reqItem.name}</h3>
+      <div class="price">السعر بعد إضافة +60: ${reqItem.finalPrice} جنيه <small style="display:inline;color:#ffd000">(سعر صاحب الحساب: ${reqItem.basePrice} جنيه)</small></div>
+      <p style="margin:6px 0;font-size:13.5px;color:#d6e4f5">العارض: ${reqItem.sellerInfo}</p>
+      <p style="margin:6px 0;font-size:13.5px;color:#c9d8eb">${reqItem.description}</p>
+      ${reqItem.photo ? `<img src="${reqItem.photo}" alt="صورة الحساب">` : ""}
+      <small>الوقت: ${reqItem.createdAt}</small>
+      <div style="margin-top:10px">
+        <button class="accept-btn" onclick="approveListingRequest('${reqItem.key}')">موافقة ونشر في الشراء</button>
+        <button class="reject-btn" onclick="rejectListingRequest('${reqItem.key}')">رفض الطلب</button>
+      </div>
+    `;
+    area.append(card);
+  });
+}
+
+window.approveListingRequest = async function(reqKey){
+  if(!isAdminUnlocked) return;
+  const reqItem = listingRequests.find(r => r.key === reqKey);
+  if(!reqItem) return;
+
+  const finalPrice = Number(reqItem.finalPrice) || (Number(reqItem.basePrice || 0) + AUTO_MARKUP);
+  const newProdRef = push(ref(db, "products"));
+  await set(newProdRef, {
+    name: reqItem.name,
+    price: finalPrice,
+    basePrice: Number(reqItem.basePrice || 0),
+    sellerInfo: reqItem.sellerInfo || "",
+    description: reqItem.description,
+    photo: reqItem.photo || "",
+    createdAtTs: Date.now()
+  });
+  await remove(ref(db, "listing_requests/" + reqKey));
+  alert("تمت الموافقة ونشر الحساب فوراً في قسم الشراء بسعر " + finalPrice + " جنيه");
+};
+
+window.rejectListingRequest = async function(reqKey){
+  if(!isAdminUnlocked) return;
+  if(confirm("هل تريد رفض وحذف طلب عرض الحساب؟")){
+    await remove(ref(db, "listing_requests/" + reqKey));
+  }
+};
+
+window.addProductFromAdmin = async function(){
+  if(!isAdminUnlocked) return;
+  const name = document.getElementById("adminAccName").value.trim();
+  const basePrice = Number(document.getElementById("adminBasePrice").value);
+  const description = document.getElementById("adminAccDesc").value.trim();
+  const file = document.getElementById("adminAccPhoto").files[0];
+  const btn = document.getElementById("adminAddBtn");
+
+  if(!name || !basePrice || basePrice < 1 || !description){
+    alert("اكتب اسم الحساب والسعر الأساسي والتفاصيل");
+    return;
+  }
+  if(file && file.size > 500000){
+    alert("اختار صورة أقل من 500 كيلوبايت");
+    return;
+  }
+
+  const finalPrice = basePrice + AUTO_MARKUP;
+  btn.disabled = true;
+  btn.textContent = "جاري النشر أونلاين...";
+
+  const finish = async (photo)=>{
+    try{
+      const newProdRef = push(ref(db, "products"));
+      await set(newProdRef, {
+        name,
+        price: finalPrice,
+        basePrice,
+        description,
+        photo,
+        createdAtTs: Date.now()
+      });
+      document.getElementById("adminAccName").value = "";
+      document.getElementById("adminBasePrice").value = "";
+      document.getElementById("adminAccDesc").value = "";
+      document.getElementById("adminAccPhoto").value = "";
+      updateAdminFeePreview();
+      alert("تم نشر الحساب بسعر " + finalPrice + " جنيه");
+    } catch(err){
+      alert("حدث خطأ أثناء نشر الحساب أونلاين");
+    } finally{
+      btn.disabled = false;
+      btn.textContent = "نشر الحساب فوراً";
+    }
+  };
+
+  if(file){
+    const reader = new FileReader();
+    reader.onload = ()=>finish(reader.result);
+    reader.readAsDataURL(file);
+  } else {
+    await finish("");
+  }
+};
+
+function renderProducts(){
+  const buyArea = document.getElementById("buyProducts");
+  const adminArea = document.getElementById("adminProducts");
+  if(!buyArea) return;
+  buyArea.innerHTML = "";
+  if(adminArea) adminArea.innerHTML = "";
+
+  if(items.length === 0){
+    buyArea.textContent = "لا توجد حسابات معروضة حالياً";
+    if(adminArea && isAdminUnlocked) adminArea.textContent = "لا توجد حسابات منشورة حالياً";
+    return;
+  }
+
+  items.forEach((item)=>{
+    const postedLabel = formatTimeAgo(item.createdAtTs);
+
+    const buyCard = document.createElement("div");
+    buyCard.className = "card-item";
+    buyCard.innerHTML = `
+      ${item.photo ? `<img src="${item.photo}" alt="صورة الحساب">` : ""}
+      <h3 style="margin:0 0 4px 0">${item.name}</h3>
+      <small style="color:#4fd19b">${postedLabel}</small>
+      <div class="price">${item.price} جنيه</div>
+      <p style="margin:0;color:#c9d8eb;font-size:14px">${item.description}</p>
+    `;
+    const buyBtn = document.createElement("button");
+    buyBtn.className = "order-btn";
+    buyBtn.textContent = "طلب شراء";
+    buyBtn.onclick = ()=>openOrderModal(item.key);
+    buyCard.append(buyBtn);
+    buyArea.append(buyCard);
+
+    if(adminArea && isAdminUnlocked){
+      const adminCard = document.createElement("div");
+      adminCard.className = "card-item";
+      adminCard.innerHTML = `
+        ${item.photo ? `<img src="${item.photo}" alt="صورة الحساب">` : ""}
+        <h3 style="margin:0 0 4px 0">${item.name}</h3>
+        <small style="color:#4fd19b">${postedLabel}</small>
+        <div class="price">${item.price} جنيه</div>
+        ${item.sellerInfo ? `<small>العارض: ${item.sellerInfo} (السعر الأساسي: ${item.basePrice || "-"} جنيه)</small>` : ""}
+        <p style="margin:6px 0 0 0;color:#c9d8eb;font-size:14px">${item.description}</p>
+      `;
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete";
+      delBtn.textContent = "حذف الحساب";
+      delBtn.onclick = ()=>removeProduct(item.key);
+      adminCard.append(delBtn);
+      adminArea.append(adminCard);
+    }
+  });
+}
+
+window.removeProduct = async function(productKey){
+  if(!isAdminUnlocked) return;
+  if(confirm("هل تريد حذف الحساب؟")){
+    await remove(ref(db, "products/" + productKey));
+  }
+};
+
+window.openOrderModal = function(productKey){
+  activeProductId = productKey;
+  const item = items.find(x => x.key === productKey);
+  if(!item) return;
+  document.getElementById("selectedProductInfo").textContent =
+    item.name + " — " + item.price + " جنيه";
+  document.getElementById("buyerName").value = currentUser ? currentUser.name : "";
+  document.getElementById("buyerContact").value = currentUser ? currentUser.identifier : "";
+  document.getElementById("proofFile").value = "";
+  document.getElementById("orderModal").style.display = "flex";
+};
+
+window.closeOrderModal = function(){
+  activeProductId = null;
+  document.getElementById("orderModal").style.display = "none";
+};
+
+window.submitProductOrder = async function(){
+  const product = items.find(x => x.key === activeProductId);
+  if(!product) return;
+
+  const buyerName = document.getElementById("buyerName").value.trim();
+  const buyerContact = document.getElementById("buyerContact").value.trim();
+  const proofFile = document.getElementById("proofFile").files[0];
+  const btn = document.getElementById("productOrderSubmitBtn");
+
+  if(!buyerName || !buyerContact || !proofFile){
+    alert("اكمل البيانات وارفع صورة إثبات التحويل");
+    return;
+  }
+  if(proofFile.size > 500000){
+    alert("صورة الإثبات أكبر من 500 كيلوبايت");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الإرسال...";
+
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    try{
+      const orderRef = push(ref(db, "orders"));
+      await set(orderRef, {
+        type: "شراء حساب",
+        productName: product.name,
+        priceText: product.price + " جنيه",
+        buyerName,
+        buyerContact,
+        userId: currentUser ? currentUser.id : null,
+        proof: reader.result,
+        status: "pending",
+        createdAt: new Date().toLocaleString("ar-EG"),
+        createdAtTs: Date.now()
+      });
+      closeOrderModal();
+      alert("تم إرسال الطلب أونلاين، ويمكنك متابعة تفاصيل الحساب في قسم المحادثة مع الإدارة");
+    } catch(err){
+      alert("تعذر إرسال الطلب، حاول مرة أخرى");
+    } finally{
+      btn.disabled = false;
+      btn.textContent = "إرسال الطلب";
+    }
+  };
+  reader.readAsDataURL(proofFile);
+};
+
+window.submitCoinOrder = async function(){
+  const selectEl = document.getElementById("coinPackage");
+  const pkg = selectEl.value;
+  const priceText = selectEl.selectedOptions[0]?.dataset?.price || "يُراجع مع الإدارة";
+  const accountId = document.getElementById("coinAccountId").value.trim();
+  const buyerName = document.getElementById("coinBuyerName").value.trim();
+  const proofFile = document.getElementById("coinProofFile").files[0];
+  const btn = document.getElementById("coinSubmitBtn");
+
+  if(!buyerName || !accountId || !proofFile){
+    alert("اكمل البيانات وارفع صورة إثبات التحويل");
+    return;
+  }
+  if(proofFile.size > 500000){
+    alert("صورة الإثبات أكبر من 500 كيلوبايت");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الإرسال...";
+
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    try{
+      const orderRef = push(ref(db, "orders"));
+      await set(orderRef, {
+        type: "شحن كوينز وعروض",
+        productName: pkg,
+        priceText,
+        buyerName,
+        buyerContact: accountId,
+        userId: currentUser ? currentUser.id : null,
+        proof: reader.result,
+        status: "pending",
+        createdAt: new Date().toLocaleString("ar-EG"),
+        createdAtTs: Date.now()
+      });
+      document.getElementById("coinProofFile").value = "";
+      alert("تم إرسال طلب الشحن أونلاين، ادخل قسم المحادثة مع الإدارة لإرسال بيانات الحساب أو الكود");
+    } catch(err){
+      alert("تعذر إرسال الطلب، حاول مرة أخرى");
+    } finally{
+      btn.disabled = false;
+      btn.textContent = "إرسال طلب الشحن";
+    }
+  };
+  reader.readAsDataURL(proofFile);
+};
+
+window.updateOrderStatus = async function(orderKey, status){
+  if(!isAdminUnlocked) return;
+  await update(ref(db, "orders/" + orderKey), { status });
+};
+
+window.deleteOrder = async function(orderKey){
+  if(!isAdminUnlocked) return;
+  if(confirm("حذف الطلب؟")){
+    await remove(ref(db, "orders/" + orderKey));
+  }
+};
+
+function renderOrders(){
+  const area = document.getElementById("orders");
+  if(!area) return;
+  area.innerHTML = "";
+  if(!isAdminUnlocked) return;
+  if(orders.length === 0){
+    area.textContent = "لا توجد طلبات حتى الآن";
+    return;
+  }
+
+  orders.forEach(order=>{
+    const card = document.createElement("div");
+    card.className = "order-card";
+
+    const stText =
+      order.status === "accepted" ? "مقبول" :
+      order.status === "rejected" ? "مرفوض" : "قيد المراجعة";
+    const stClass =
+      order.status === "accepted" ? "accepted" :
+      order.status === "rejected" ? "rejected" : "pending";
+
+    card.innerHTML = `
+      <span class="badge ${stClass}">${stText}</span>
+      <h3 style="margin:4px 0">[${order.type}] ${order.productName} (${order.priceText})</h3>
+      <p style="margin:6px 0;font-size:14px">العميل: ${order.buyerName} | التواصل: ${order.buyerContact}</p>
+      <small>الوقت: ${order.createdAt}</small>
+      <img src="${order.proof}" class="proof-img" alt="إثبات التحويل">
+      <div style="margin-top:10px">
+        <button class="accept-btn" onclick="updateOrderStatus('${order.key}', 'accepted')">قبول الطلب</button>
+        <button class="reject-btn" onclick="updateOrderStatus('${order.key}', 'rejected')">رفض الطلب</button>
+        <button class="delete" onclick="deleteOrder('${order.key}')">حذف</button>
+      </div>
+    `;
+    area.append(card);
+  });
+}
+
+window.submitComplaint = async function(){
+  const name = document.getElementById("compName").value.trim();
+  const contact = document.getElementById("compContact").value.trim();
+  const subject = document.getElementById("compSubject").value.trim();
+  const details = document.getElementById("compDetails").value.trim();
+  const btn = document.getElementById("compSubmitBtn");
+
+  if(!name || !contact || !subject || !details){
+    alert("اكمل جميع بيانات الشكوى");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الإرسال...";
+
+  try{
+    const compRef = push(ref(db, "complaints"));
+    await set(compRef, {
+      name,
+      contact,
+      subject,
+      details,
+      userId: currentUser ? currentUser.id : null,
+      status: "open",
+      createdAt: new Date().toLocaleString("ar-EG"),
+      createdAtTs: Date.now()
+    });
+    document.getElementById("compSubject").value = "";
+    document.getElementById("compDetails").value = "";
+    alert("تم إرسال شكواك للإدارة بنجاح");
+  } catch(err){
+    alert("تعذر إرسال الشكوى، حاول مرة أخرى");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "إرسال الشكوى";
+  }
+};
+
+window.resolveComplaint = async function(compKey){
+  if(!isAdminUnlocked) return;
+  await update(ref(db, "complaints/" + compKey), { status: "resolved" });
+};
+
+window.deleteComplaint = async function(compKey){
+  if(!isAdminUnlocked) return;
+  if(confirm("حذف الشكوى؟")){
+    await remove(ref(db, "complaints/" + compKey));
+  }
+};
+
+function renderComplaints(){
+  const area = document.getElementById("adminComplaints");
+  if(!area) return;
+  area.innerHTML = "";
+  if(!isAdminUnlocked) return;
+  if(complaints.length === 0){
+    area.textContent = "لا توجد شكاوى حالياً";
+    return;
+  }
+
+  complaints.forEach(c=>{
+    const card = document.createElement("div");
+    card.className = "complaint-card";
+    const isResolved = c.status === "resolved";
+    card.innerHTML = `
+      <span class="badge ${isResolved ? "resolved-badge" : "open-badge"}">${isResolved ? "تمت المعالجة" : "جديدة"}</span>
+      <h3 style="margin:4px 0">${c.subject}</h3>
+      <p style="margin:6px 0;font-size:14px">المرسل: ${c.name} | التواصل: ${c.contact}</p>
+      <p style="margin:6px 0;color:#d6e4f5;font-size:14px">${c.details}</p>
+      <small>الوقت: ${c.createdAt}</small>
+      <div style="margin-top:10px">
+        <button class="accept-btn" onclick="resolveComplaint('${c.key}')">تمت المعالجة</button>
+        <button class="delete" onclick="deleteComplaint('${c.key}')">حذف</button>
+      </div>
+    `;
+    area.append(card);
+  });
+}
+
+if(currentUser){
+  enterApp();
+} else {
+  document.getElementById("headerSubtitle").textContent = "سجّل الدخول للمتابعة";
+}
+</script>
+</body>
+</html>
