@@ -6,18 +6,28 @@
 <title>ZAEM STORE</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
 body{
   margin:0;
-  background:#060b14;
+  background:radial-gradient(circle at top right,#0c192c 0%,#060b14 55%,#04080f 100%);
   color:#f4f7fb;
   font-family:Tahoma,Arial,sans-serif;
   min-height:100vh;
+  font-size:15px;
+  display:flex;
+  flex-direction:column;
 }
+body.large-text{font-size:17px}
+body.large-text .cat-content p,
+body.large-text small,
+body.large-text .profile-info-list{font-size:14.5px}
+
 header{
   background:rgba(13,24,41,0.96);
+  backdrop-filter:blur(8px);
   padding:14px 16px;
   border-bottom:2px solid #00e5ff;
-  box-shadow:0 0 18px rgba(0,229,255,0.2);
+  box-shadow:0 0 20px rgba(0,229,255,0.22);
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -34,25 +44,53 @@ header{
   text-shadow:0 0 10px rgba(0,229,255,0.45);
 }
 .brand small{color:#9eb3cc;font-size:12px}
-.header-actions{display:flex;align-items:center;gap:6px}
-.back-btn,.logout-btn{
+.header-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.back-btn,.logout-btn,.font-btn{
   background:#152842;
   color:#fff;
   border:1px solid #00e5ff;
   border-radius:10px;
-  padding:7px 12px;
+  padding:7px 10px;
   font-size:12px;
   font-weight:bold;
   cursor:pointer;
-  display:none;
+  transition:all 0.18s ease;
 }
+.back-btn:hover,.logout-btn:hover,.font-btn:hover{
+  box-shadow:0 0 10px rgba(0,229,255,0.35);
+}
+.back-btn,.logout-btn{display:none}
 .logout-btn{border-color:#ff4d79;color:#ffb8c9}
 .back-btn.visible,.logout-btn.visible{display:inline-block}
 
-.container{padding:16px;max-width:680px;margin:auto}
+.container{padding:16px;max-width:680px;width:100%;margin:0 auto;flex:1}
 .page{display:none}
-.page.active{display:block;animation:fadeSlide 0.2s ease}
+.page.active{display:block;animation:fadeSlide 0.22s ease}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* 1. شريط أخبار وعروض متحرك */
+.news-ticker{
+  background:linear-gradient(90deg,#0c1f36,#162c49,#0c1f36);
+  border:1px solid #1f4875;
+  border-radius:11px;
+  overflow:hidden;
+  padding:7px 0;
+  margin-bottom:12px;
+  white-space:nowrap;
+  position:relative;
+}
+.news-ticker-track{
+  display:inline-block;
+  padding-right:100%;
+  animation:tickerMove 22s linear infinite;
+  color:#7ce8ff;
+  font-size:12.5px;
+  font-weight:bold;
+}
+@keyframes tickerMove{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(100%)}
+}
 
 .status-bar{
   background:#0e1b2d;
@@ -76,6 +114,22 @@ header{
   display:inline-block;
   margin-left:6px;
 }
+
+.flash-banner{
+  background:linear-gradient(135deg,#2b163d,#13233b);
+  border:1px solid #ffd000;
+  border-radius:14px;
+  padding:12px 14px;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  box-shadow:0 0 16px rgba(255,208,0,0.12);
+}
+.flash-title{color:#ffd000;font-weight:bold;font-size:14px}
+.flash-timer{background:#09111d;color:#22ff88;border:1px solid #22ff88;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:bold}
 
 .auth-card{
   background:linear-gradient(165deg,#122238 0%,#0b1422 100%);
@@ -122,15 +176,30 @@ header{
   font-weight:bold;
   cursor:pointer;
   text-align:center;
+  transition:all 0.18s ease;
 }
 .admin-tab.active{
   background:#22ff88;
   color:#05150e;
   border-color:#22ff88;
-  box-shadow:0 0 12px rgba(34,255,136,0.25);
+  box-shadow:0 0 12px rgba(34,255,136,0.28);
 }
 .admin-section{display:none}
 .admin-section.active{display:block;animation:fadeSlide 0.18s ease}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+.stat-card{
+  background:linear-gradient(160deg,#152740,#0f1b2d);
+  border:1px solid #2c4970;
+  border-radius:13px;
+  padding:12px;
+}
+.stat-num{font-size:20px;font-weight:bold;color:#00e5ff;margin-top:4px}
 
 .home-header-row{
   display:flex;
@@ -138,6 +207,7 @@ header{
   justify-content:space-between;
   gap:10px;
   margin:4px 0 14px 0;
+  flex-wrap:wrap;
 }
 .home-title{margin:0;font-size:17px;color:#d6e6f8}
 .admin-lock-btn{
@@ -161,6 +231,7 @@ header{
   .cats-grid{grid-template-columns:1fr}
 }
 
+/* 3. إطار متوهج تفاعلي عند المرور والضغط */
 .cat-box{
   position:relative;
   background:linear-gradient(165deg,#122238 0%,#0b1422 100%);
@@ -169,10 +240,14 @@ header{
   overflow:hidden;
   cursor:pointer;
   box-shadow:0 0 14px var(--neon-glow,rgba(0,229,255,0.22)),0 10px 22px rgba(0,0,0,0.45);
-  transition:transform 0.15s ease;
+  transition:transform 0.16s ease, box-shadow 0.2s ease;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
+}
+.cat-box:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 22px var(--neon-glow,rgba(0,229,255,0.42)),0 12px 24px rgba(0,0,0,0.55);
 }
 .cat-box:active{transform:scale(0.97)}
 .neon-top-line{
@@ -197,18 +272,21 @@ header{
 }
 .cat-content p{margin:0;color:#b6c7dc;font-size:12.5px;line-height:1.45}
 
-.neon-buy{--neon:#00e5ff;--neon-glow:rgba(0,229,255,0.25);--neon-soft:rgba(0,229,255,0.22)}
-.neon-coins{--neon:#ffd000;--neon-glow:rgba(255,208,0,0.25);--neon-soft:rgba(255,208,0,0.22)}
-.neon-sell{--neon:#22ff88;--neon-glow:rgba(34,255,136,0.25);--neon-soft:rgba(34,255,136,0.22)}
-.neon-complain{--neon:#ff4d79;--neon-glow:rgba(255,77,121,0.25);--neon-soft:rgba(255,77,121,0.22)}
-.neon-chat{--neon:#a855f7;--neon-glow:rgba(168,85,247,0.25);--neon-soft:rgba(168,85,247,0.22)}
+/* 5. تدرجات لونية متناسقة حسب القسم */
+.neon-buy{--neon:#00e5ff;--neon-glow:rgba(0,229,255,0.28);--neon-soft:rgba(0,229,255,0.22)}
+.neon-coins{--neon:#ffd000;--neon-glow:rgba(255,208,0,0.28);--neon-soft:rgba(255,208,0,0.22)}
+.neon-sell{--neon:#22ff88;--neon-glow:rgba(34,255,136,0.28);--neon-soft:rgba(34,255,136,0.22)}
+.neon-complain{--neon:#ff4d79;--neon-glow:rgba(255,77,121,0.28);--neon-soft:rgba(255,77,121,0.22)}
+.neon-chat{--neon:#a855f7;--neon-glow:rgba(168,85,247,0.28);--neon-soft:rgba(168,85,247,0.22)}
+.neon-profile{--neon:#38bdf8;--neon-glow:rgba(56,189,248,0.28);--neon-soft:rgba(56,189,248,0.22)}
 
 .panel{
-  background:#0f1c2e;
+  background:linear-gradient(175deg,#101f33 0%,#0c1727 100%);
   border:1px solid #243e61;
   border-radius:16px;
   padding:16px;
   margin-bottom:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.28);
 }
 .panel h2{margin:0 0 12px 0;font-size:17px;color:#00e5ff}
 
@@ -220,10 +298,10 @@ input,textarea,select{
   border:1px solid #335075;
   border-radius:11px;
   color:#fff;
-  font-size:14px;
+  font-size:15px;
   font-family:inherit;
 }
-input:focus,textarea:focus,select:focus{outline:none;border-color:#00e5ff}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#00e5ff;box-shadow:0 0 8px rgba(0,229,255,0.22)}
 
 button{
   background:#168cff;
@@ -235,7 +313,9 @@ button{
   font-weight:bold;
   cursor:pointer;
   font-family:inherit;
+  transition:transform 0.14s ease, filter 0.16s ease;
 }
+button:hover{filter:brightness(1.08)}
 button:active{transform:scale(0.98)}
 button:disabled{opacity:0.6;cursor:not-allowed}
 .copy-btn{background:#1b7d4e;margin-top:8px}
@@ -246,6 +326,115 @@ button:disabled{opacity:0.6;cursor:not-allowed}
 .accept-btn{background:#1e8e5a;margin-left:6px}
 .reject-btn{background:#b52b35;margin-left:6px}
 .delete{background:#7e222b;margin-top:8px}
+.secondary-btn{background:#233b5c;color:#e2e8f0;margin-left:6px;margin-top:8px}
+
+/* 14. فصل أزرار الإدارة السريعة عن الحساسة */
+.admin-actions-bar{
+  margin-top:12px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.admin-primary-group,.admin-danger-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.filter-row{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:8px;
+  margin-bottom:8px;
+}
+@media (max-width:480px){
+  .filter-row{grid-template-columns:1fr}
+}
+
+/* 12. بطاقة ملخص سريعة أعلى صفحة الشراء */
+.buy-summary-strip{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:12px;
+}
+.buy-summary-chip{
+  background:#12243b;
+  border:1px solid #2b4e78;
+  border-radius:11px;
+  padding:9px 12px;
+  font-size:12.5px;
+  color:#b6d4f2;
+}
+.buy-summary-chip strong{
+  display:block;
+  font-size:15px;
+  color:#00e5ff;
+  margin-top:2px;
+}
+
+.quick-replies{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:10px;
+}
+.quick-chip{
+  background:#182c47;
+  border:1px solid #3a5c8a;
+  color:#d8e8ff;
+  border-radius:999px;
+  padding:6px 11px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.profile-header-box{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:#14243a;
+  border:1px solid #2b476e;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.profile-avatar-wrap{
+  width:84px;
+  height:84px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid #38bdf8;
+  background:#0a1320;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 0 14px rgba(56,189,248,0.25);
+}
+.profile-avatar-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.profile-avatar-placeholder{
+  font-size:28px;
+  font-weight:bold;
+  color:#38bdf8;
+}
+.profile-info-list{
+  background:#132136;
+  border:1px solid #294366;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  font-size:13.5px;
+  line-height:1.7;
+}
 
 .fee-preview{
   background:#112338;
@@ -257,6 +446,27 @@ button:disabled{opacity:0.6;cursor:not-allowed}
   color:#b6f7d4;
 }
 .fee-preview strong{color:#22ff88}
+
+.count-pill{
+  background:#11263d;
+  border:1px solid #22ff88;
+  color:#7ef9b9;
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:13.5px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+.reject-reason-box{
+  background:#3b1118;
+  border:1px solid #ff4d79;
+  color:#ffc2d1;
+  border-radius:10px;
+  padding:9px 11px;
+  margin-top:8px;
+  font-size:13px;
+  line-height:1.45;
+}
 
 .offers-box{
   background:#132136;
@@ -279,20 +489,56 @@ button:disabled{opacity:0.6;cursor:not-allowed}
 .offer-row:last-child{margin-bottom:0}
 .offer-price{color:#22ff88;font-weight:bold}
 
-.card-item,.order-card,.complaint-card,.listing-req-card,.thread-item{
-  background:#15253b;
-  border:1px solid #294366;
-  border-radius:14px;
+.card-item,.order-card,.complaint-card,.listing-req-card,.thread-item,.my-listing-card,.review-card,.compare-box,.notif-item{
+  background:linear-gradient(165deg,#172942 0%,#122035 100%);
+  border:1px solid #2c4a73;
+  border-radius:15px;
   padding:14px;
   margin-top:12px;
+  transition:border-color 0.2s ease, transform 0.16s ease;
 }
-.card-item img,.listing-req-card img{
+.card-item:hover,.order-card:hover,.thread-item:hover{
+  border-color:#00e5ff;
+}
+.card-item img,.listing-req-card img,.my-listing-card img{
   width:100%;
   height:185px;
   object-fit:contain;
-  background:#0b1320;
+  background:#09111d;
   border-radius:10px;
+  margin-bottom:8px;
+  border:1px solid #223959;
+}
+
+/* 8. معرض صور متعدد قابل للتبديل داخل بطاقة الحساب */
+.gallery-switcher{
+  display:flex;
+  gap:6px;
   margin-bottom:10px;
+}
+.gallery-tab-btn{
+  background:#0e1b2d;
+  color:#a8bdd6;
+  border:1px solid #2d4b73;
+  border-radius:8px;
+  padding:5px 10px;
+  font-size:12px;
+  cursor:pointer;
+}
+.gallery-tab-btn.active{
+  background:#00e5ff;
+  color:#05101d;
+  border-color:#00e5ff;
+}
+
+.extra-photo-img{
+  width:100%;
+  height:150px;
+  object-fit:contain;
+  background:#09111d;
+  border-radius:10px;
+  margin-top:6px;
+  border:1px solid #2c476b;
 }
 .proof-img{
   max-width:100%;
@@ -304,6 +550,23 @@ button:disabled{opacity:0.6;cursor:not-allowed}
 }
 .price{color:#00e5ff;font-size:18px;font-weight:bold;margin:6px 0}
 
+/* 11. إظهار السعر قبل وبعد الخصم بوضوح */
+.promo-preview-box{
+  background:#10291e;
+  border:1px solid #22ff88;
+  border-radius:10px;
+  padding:8px 11px;
+  margin-top:6px;
+  font-size:13px;
+  color:#b6f7d4;
+}
+.old-price-strike{
+  text-decoration:line-through;
+  color:#ff8fa3;
+  margin-left:8px;
+  font-size:13px;
+}
+
 .wallet-box{
   background:#132237;
   border:1px dashed #00e5ff;
@@ -313,13 +576,86 @@ button:disabled{opacity:0.6;cursor:not-allowed}
 }
 .wallet-num{color:#22ff88;font-size:19px;font-weight:bold;margin:6px 0}
 
-.badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:bold;margin-bottom:6px}
+/* 2 & 10. وسوم الحساب ونبض الإشعارات */
+.badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:bold;margin-bottom:6px;margin-left:4px}
 .pending{background:#6b5314;color:#ffd454}
 .accepted{background:#165b3a;color:#6ef2b2}
 .rejected{background:#6e1d24;color:#ff9aa2}
 .open-badge{background:#6e1d36;color:#ff9bb8}
 .resolved-badge{background:#165b3a;color:#6ef2b2}
 .chat-badge{background:#4c1d95;color:#e9d5ff}
+.new-badge{background:#0e5a7a;color:#7ce8ff}
+.sold-badge{background:#7c1d28;color:#ffb4be}
+.verified-badge{background:#0e3a47;color:#38bdf8;border:1px solid rgba(56,189,248,0.4)}
+
+.pulse-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#ffd000;
+  box-shadow:0 0 8px #ffd000;
+  margin-left:6px;
+}
+
+/* 13. شريط تقدم بصري لحالة الطلب */
+.order-stepper{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+  margin:10px 0 6px 0;
+}
+.step-seg{
+  background:#0e1b2d;
+  border:1px solid #274163;
+  border-radius:7px;
+  padding:5px 4px;
+  text-align:center;
+  font-size:11px;
+  color:#8ea6c4;
+}
+.step-seg.done{
+  background:#13422e;
+  border-color:#22ff88;
+  color:#86efac;
+  font-weight:bold;
+}
+.step-seg.rejected-step{
+  background:#4a1620;
+  border-color:#ff4d79;
+  color:#ffb3c6;
+  font-weight:bold;
+}
+
+/* 4. شاشة تحميل هيكلية (Skeleton Loader) */
+.skeleton-card{
+  background:#122035;
+  border:1px solid #223959;
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
+}
+.skel-line{
+  height:14px;
+  border-radius:8px;
+  background:linear-gradient(90deg,#182b47 25%,#243f66 50%,#182b47 75%);
+  background-size:200% 100%;
+  animation:skelPulse 1.3s infinite linear;
+  margin-bottom:10px;
+}
+.skel-img{height:140px;margin-bottom:12px}
+@keyframes skelPulse{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
+.delivery-card{
+  background:#0e2438;
+  border:1px solid #22ff88;
+  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
+}
 
 .chat-box{
   background:#0a1320;
@@ -340,6 +676,7 @@ button:disabled{opacity:0.6;cursor:not-allowed}
   font-size:13.5px;
   line-height:1.45;
   word-wrap:break-word;
+  white-space:pre-line;
 }
 .msg-user{
   align-self:flex-start;
@@ -365,6 +702,65 @@ button:disabled{opacity:0.6;cursor:not-allowed}
 }
 .chat-send-row input{margin:0;flex:1}
 
+/* 7. نافذة إشعارات أنيقة داخل التطبيق (Toast) */
+.app-toast{
+  position:fixed;
+  bottom:76px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#0f243d;
+  color:#e6fff4;
+  border:1.5px solid #22ff88;
+  box-shadow:0 8px 24px rgba(0,0,0,0.55);
+  padding:11px 18px;
+  border-radius:12px;
+  font-size:13.5px;
+  font-weight:bold;
+  z-index:80;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.22s ease, transform 0.22s ease;
+  max-width:92%;
+  text-align:center;
+}
+.app-toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* 9. زر العودة للأعلى عائم */
+.scroll-top-btn{
+  position:fixed;
+  bottom:20px;
+  left:18px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#0e223b;
+  color:#00e5ff;
+  border:1.5px solid #00e5ff;
+  box-shadow:0 0 14px rgba(0,229,255,0.35);
+  font-size:18px;
+  padding:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:35;
+}
+.scroll-top-btn.visible{display:flex}
+
+/* 15. تذييل سفلي أنيق ومختصر */
+.store-footer{
+  background:#091220;
+  border-top:1px solid #1e3554;
+  padding:14px 16px;
+  text-align:center;
+  font-size:12px;
+  color:#8da6c4;
+  margin-top:24px;
+}
+.store-footer strong{color:#00e5ff}
+
 .modal-backdrop{
   position:fixed;
   inset:0;
@@ -381,7 +777,7 @@ button:disabled{opacity:0.6;cursor:not-allowed}
   border-radius:16px;
   padding:18px;
   width:100%;
-  max-width:460px;
+  max-width:480px;
   max-height:88vh;
   overflow-y:auto;
 }
@@ -396,12 +792,19 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
     <small id="headerSubtitle">جاري الاتصال...</small>
   </div>
   <div class="header-actions">
+    <button class="font-btn" onclick="toggleFontSize()">حجم الخط</button>
     <button id="backBtn" class="back-btn" onclick="goHome()">← الرئيسية</button>
     <button id="logoutBtn" class="logout-btn" onclick="logoutUser()">خروج</button>
   </div>
 </header>
 
 <div class="container">
+  <div class="news-ticker">
+    <div class="news-ticker-track">
+      ★ أهلاً بك في ZAEM STORE — شحن كوينز أندرويد فوري • عروض سواريز وكاسياس ومدرب مورينهو متاحة الآن • تسليم آمن وتحديث لحظي للحسابات ★
+    </div>
+  </div>
+
   <div class="status-bar">
     <div><span class="status-dot" id="connDot"></span><span id="connText">متصل بالسحابة (تحديث فوري)</span></div>
     <span id="onlineCount">الحسابات: 0</span>
@@ -434,12 +837,28 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
 
   <!-- الصفحة الرئيسية -->
   <section id="page-home" class="page">
+    <div class="flash-banner">
+      <div>
+        <div class="flash-title">⚡ عرض لفترة محدودة: باقات الكوينز وعروض اللاعبين والمدربين</div>
+        <small style="margin:2px 0 0 0">سواريز • كاسياس • مدرب مورينهو — اطلب الآن قبل انتهاء العد التنازلي</small>
+      </div>
+      <span class="flash-timer" id="flashCountdown">04:00:00</span>
+    </div>
+
     <div class="home-header-row">
       <p class="home-title" id="welcomeBanner">أقسام التطبيق</p>
-      <button class="admin-lock-btn" onclick="openAdminGate()">قسم الإدارة</button>
+      <button class="admin-lock-btn" onclick="openAdminGate()">🛡️ قسم الإدارة</button>
     </div>
 
     <div class="cats-grid">
+      <div class="cat-box neon-profile" onclick="openPage('profile', 'حسابي')">
+        <div class="neon-top-line"></div>
+        <div class="cat-content">
+          <h2>👤 حسابي <span id="homeNotifBadge" class="badge pending" style="margin:0 6px 0 0">0</span></h2>
+          <p>بياناتك وصورتك، المفضلة، سجل طلباتك، ومركز التنبيهات.</p>
+        </div>
+      </div>
+
       <div class="cat-box neon-buy" onclick="openPage('buy', 'قسم الشراء')">
         <div class="neon-top-line"></div>
         <div class="cat-banner">
@@ -454,8 +873,8 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
           </svg>
         </div>
         <div class="cat-content">
-          <h2>قسم الشراء</h2>
-          <p>تصفح أحدث الحسابات فوراً وإرسال طلب شراء مع إثبات التحويل.</p>
+          <h2>🛒 قسم الشراء</h2>
+          <p>حالة الحساب، عرض سريع، مقارنة، مشاركة، وإبلاغ.</p>
         </div>
       </div>
 
@@ -474,8 +893,8 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
           </svg>
         </div>
         <div class="cat-content">
-          <h2>قسم شحن الكوينز</h2>
-          <p>باقات أندرويد وعروض اللاعبين والمدربين مع إرفاق إثبات الدفع.</p>
+          <h2>🪙 قسم شحن الكوينز</h2>
+          <p>باقات أندرويد وعروض اللاعبين والمدربين مع كود خصم.</p>
         </div>
       </div>
 
@@ -495,8 +914,8 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
           </svg>
         </div>
         <div class="cat-content">
-          <h2>قسم البيع</h2>
-          <p>اعرض حسابك براحتك ويُرسل كطلب موافقة للإدارة (+60 جنيه تلقائي).</p>
+          <h2>💼 قسم البيع</h2>
+          <p>اعرض حسابك، عدّله قبل المراجعة، وتابع حالته وسبب الرفض.</p>
         </div>
       </div>
 
@@ -515,25 +934,75 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
           </svg>
         </div>
         <div class="cat-content">
-          <h2>قسم الشكاوي</h2>
+          <h2>📩 قسم الشكاوي</h2>
           <p>إرسال شكوى أو بلاغ للإدارة مباشرة وسرية.</p>
         </div>
       </div>
 
-      <div class="cat-box neon-chat" onclick="openPage('chat', 'المحادثة مع الإدارة')" style="grid-column:1 / -1">
+      <div class="cat-box neon-chat" onclick="openPage('chat', 'المحادثة مع الإدارة')">
         <div class="neon-top-line"></div>
         <div class="cat-content">
-          <h2>المحادثة المباشرة مع الإدارة</h2>
-          <p>تواصل مع الإدارة لتسليم بيانات الحساب أو الكود في الشحن والبيع والشراء.</p>
+          <h2>💬 المحادثة المباشرة <span id="homeChatCounter" class="badge chat-badge" style="margin:0 6px 0 0">0</span></h2>
+          <p>تواصل فوري، ردود سريعة، وبطاقة تسليم بيانات بنسخ فوري.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- قائمة حسابي -->
+  <section id="page-profile" class="page">
+    <div class="panel">
+      <h2 style="color:#38bdf8">👤 حسابي — بيانات العميل وصورة الحساب</h2>
+
+      <div class="profile-header-box">
+        <div class="profile-avatar-wrap" id="profileAvatarBox">
+          <span class="profile-avatar-placeholder" id="profileAvatarInitial">Z</span>
+        </div>
+        <div>
+          <div id="profileDisplayName" style="font-size:17px;font-weight:bold;color:#fff">اسم العميل</div>
+          <small id="profileDisplayIdentifier">وسيلة التواصل</small>
+          <small id="profileDisplayJoined">تاريخ الإنشاء</small>
+        </div>
+      </div>
+
+      <div class="profile-info-list" id="profileDetailsSummary"></div>
+
+      <label>إضافة أو تغيير صورة حسابي:</label>
+      <input id="profilePhotoInput" type="file" accept="image/*">
+      <small>حجم الصورة أقل من 500 كيلوبايت.</small>
+
+      <label style="display:block;margin-top:10px">الاسم بالكامل:</label>
+      <input id="profileNameInput" placeholder="اكتب اسمك">
+
+      <label>رقم الهاتف أو البريد الإلكتروني:</label>
+      <input id="profileIdentifierInput" placeholder="رقم الهاتف أو البريد الإلكتروني">
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button id="saveProfileBtn" class="accept-btn" onclick="saveProfileData()">حفظ بياناتي وصورتي</button>
+        <button class="reject-btn" onclick="removeProfilePhoto()">إزالة الصورة</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="color:#c084fc">🔔 مركز التنبيهات الذكية</h2>
+      <div id="myNotificationsContainer"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="color:#ffd000">★ حساباتي المفضلة</h2>
+      <div id="myFavoritesContainer"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="color:#22ff88">📦 سجل طلباتي (شراء وشحن)</h2>
+      <div id="myOrdersContainer"></div>
     </div>
   </section>
 
   <!-- صفحة 1: قسم الشراء -->
   <section id="page-buy" class="page">
     <div class="panel">
-      <h2>بيانات الدفع</h2>
+      <h2>💳 بيانات الدفع</h2>
       <div class="wallet-box">
         <div>فودافون كاش:</div>
         <div class="wallet-num">01277904942</div>
@@ -544,15 +1013,49 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
     </div>
 
     <div class="panel">
-      <h2>الحسابات المتاحة (مباشر)</h2>
-      <div id="buyProducts"></div>
+      <h2>🛒 الحسابات المتاحة (مباشر)</h2>
+      <div class="buy-summary-strip" id="buySummaryStrip">
+        <div class="buy-summary-chip">الحسابات المتاحة حالياً<strong id="buyAvailableCount">0</strong></div>
+        <div class="buy-summary-chip">أقل سعر متوفر الآن<strong id="buyLowestPrice">-</strong></div>
+      </div>
+
+      <div class="filter-row">
+        <input id="buySearchInput" placeholder="ابحث باسم الحساب أو التفاصيل..." oninput="renderProducts()">
+        <select id="buySortSelect" onchange="renderProducts()">
+          <option value="newest">الترتيب: الأحدث</option>
+          <option value="price_asc">السعر: من الأقل للأعلى</option>
+          <option value="price_desc">السعر: من الأعلى للأقل</option>
+        </select>
+      </div>
+      <div id="compareBar" class="count-pill" style="display:none"></div>
+      <div id="compareResultArea"></div>
+      <div id="buyProducts">
+        <div class="skeleton-card">
+          <div class="skel-line skel-img"></div>
+          <div class="skel-line" style="width:60%"></div>
+          <div class="skel-line" style="width:40%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="color:#ffd000">⭐ تقييمات وآراء العملاء</h2>
+      <input id="reviewAuthor" placeholder="اسمك">
+      <select id="reviewRating">
+        <option value="5">★★★★★ (5/5 - ممتاز وموثوق)</option>
+        <option value="4">★★★★☆ (4/5 - جيد جداً)</option>
+        <option value="3">★★★☆☆ (3/5 - مقبول)</option>
+      </select>
+      <input id="reviewComment" placeholder="اكتب رأيك أو تجربتك مع المتجر...">
+      <button class="accept-btn" style="margin-top:6px" onclick="submitReview()">إضافة تقييم</button>
+      <div id="reviewsListContainer"></div>
     </div>
   </section>
 
   <!-- صفحة 2: قسم شحن الكوينز -->
   <section id="page-coins" class="page">
     <div class="panel">
-      <h2>طلب شحن كوينز وعروض اللعبة</h2>
+      <h2 style="color:#ffd000">🪙 طلب شحن كوينز وعروض اللعبة</h2>
       <div class="wallet-box">
         <div>حوّل المبلغ إلى فودافون كاش:</div>
         <div class="wallet-num">01277904942</div>
@@ -568,7 +1071,7 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
       </div>
 
       <label style="display:block;margin-top:12px">اختر الباقة أو العرض:</label>
-      <select id="coinPackage">
+      <select id="coinPackage" onchange="updateCoinPromoPreview()">
         <optgroup label="أسعار شحن الأندرويد">
           <option value="500 كوين (أندرويد)" data-price="260 جنيه">500 كوين — 260 جنيه</option>
           <option value="1000 كوين (أندرويد)" data-price="460 جنيه">1000 كوين — 460 جنيه</option>
@@ -590,9 +1093,12 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
 
       <input id="coinAccountId" placeholder="معرّف الحساب أو وسيلة التواصل">
       <input id="coinBuyerName" placeholder="اسمك">
+      <input id="coinLast4" maxlength="4" placeholder="آخر 4 أرقام من رقم التحويل (اختياري)">
+      <input id="coinPromoCode" placeholder="كود خصم إن وُجد (مثال: ZAEM10)" oninput="updateCoinPromoPreview()">
+      <div id="coinPromoPreviewBox"></div>
       <label>صورة إثبات التحويل:</label>
       <input id="coinProofFile" type="file" accept="image/*">
-      <small>حجم الصورة أقل من 500 كيلوبايت.</small>
+      <small>حجم الصورة أقل من 500 كيلوبايت. سيتم فتح محادثة تلقائية مع الإدارة فور الإرسال.</small>
       <button id="coinSubmitBtn" class="order-btn" onclick="submitCoinOrder()">إرسال طلب الشحن</button>
     </div>
   </section>
@@ -600,7 +1106,7 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
   <!-- صفحة 3: قسم البيع -->
   <section id="page-sell" class="page">
     <div class="panel">
-      <h2 style="color:#22ff88">اعرض حسابك للبيع (بانتظار موافقة الإدارة)</h2>
+      <h2 style="color:#22ff88">💼 اعرض حسابك للبيع (بانتظار موافقة الإدارة)</h2>
       <input id="sellerName" placeholder="اسمك أو وسيلة تواصلك">
       <input id="sellAccName" placeholder="اسم الحساب (مثال: حساب بيس 102)">
       <input id="sellBasePrice" type="number" min="1" placeholder="سعرك المطلوب بالجنيه (مثال: 300)" oninput="updateSellFeePreview()">
@@ -608,51 +1114,71 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
         يُضاف تلقائياً <strong>60 جنيه</strong> فوق السعر المطلوب عند العرض — السعر النهائي للعميل: <strong>60 جنيه</strong>
       </div>
       <textarea id="sellDescription" placeholder="اكتب تفاصيل الحساب واللاعبين والربط..."></textarea>
-      <label>صورة الحساب:</label>
+      <label>صورة الحساب الأساسية:</label>
       <input id="sellPhoto" type="file" accept="image/*">
-      <small>حجم الصورة أقل من 500 كيلوبايت. سيتم إرسال الحساب كطلب موافقة للإدارة ولن يُنشر إلا بعد القبول.</small>
+      <label>صورة إضافية للحساب (اختياري):</label>
+      <input id="sellPhotoExtra" type="file" accept="image/*">
+      <small>حجم كل صورة أقل من 500 كيلوبايت. سيتم إرسال الحساب كطلب موافقة للإدارة ولن يُنشر إلا بعد القبول.</small>
       <button id="submitListingBtn" class="sell-btn" onclick="submitListingRequest()">إرسال طلب موافقة العرض</button>
+    </div>
+
+    <div class="panel">
+      <h2 style="color:#00e5ff">📋 حساباتي المعروضة وحالة الطلبات</h2>
+      <div id="myListingsCount" class="count-pill">عدد حساباتك المعروضة: 0</div>
+      <div id="myListingsContainer"></div>
     </div>
   </section>
 
   <!-- صفحة 4: قسم الإدارة -->
   <section id="page-admin" class="page">
+    <div class="stats-grid" id="adminStatsGrid"></div>
+
     <div class="admin-tabs">
       <button id="adminTabAccounts" class="admin-tab active" onclick="switchAdminSection('accounts')">1. إدارة الحسابات</button>
       <button id="adminTabOrders" class="admin-tab" onclick="switchAdminSection('orders')">2. الطلبات الواردة</button>
-      <button id="adminTabComplaints" class="admin-tab" onclick="switchAdminSection('complaints')">3. الشكاوى الواردة</button>
+      <button id="adminTabComplaints" class="admin-tab" onclick="switchAdminSection('complaints')">3. الشكاوى والبلاغات</button>
       <button id="adminTabChats" class="admin-tab" onclick="switchAdminSection('chats')">4. محادثات العملاء</button>
     </div>
 
     <div id="admin-sec-accounts" class="admin-section active">
       <div class="panel">
-        <h2 style="color:#ffd000">طلبات عرض الحسابات (بانتظار موافقتك)</h2>
-        <small>أي حساب توافق عليه يُنشر فوراً في قسم الشراء بسعره بعد إضافة 60 جنيه تلقائياً.</small>
+        <h2 style="color:#ffd000">⏳ طلبات عرض الحسابات (بانتظار موافقتك)</h2>
+        <small>أي حساب توافق عليه يُنشر فوراً في قسم الشراء بسعره بعد إضافة 60 جنيه تلقائياً. عند الرفض يجب كتابة السبب ليظهر للعميل.</small>
         <div id="listingRequestsArea"></div>
       </div>
 
       <div class="panel">
-        <h2 style="color:#00e5ff">إضافة حساب مباشرة من الإدارة</h2>
+        <h2 style="color:#00e5ff">➕ إضافة حساب مباشرة من الإدارة</h2>
         <input id="adminAccName" placeholder="اسم الحساب">
         <input id="adminBasePrice" type="number" min="1" placeholder="السعر الأساسي بالجنيه (يُضاف عليه +60 تلقائياً)" oninput="updateAdminFeePreview()">
         <div class="fee-preview" id="adminFeePreview">
           السعر النهائي بعد إضافة <strong>60 جنيه</strong> تلقائياً: <strong>60 جنيه</strong>
         </div>
         <textarea id="adminAccDesc" placeholder="تفاصيل الحساب"></textarea>
-        <label>صورة الحساب:</label>
+        <label>صورة الحساب الأساسية:</label>
         <input id="adminAccPhoto" type="file" accept="image/*">
+        <label>صورة إضافية للحساب (اختياري):</label>
+        <input id="adminAccPhotoExtra" type="file" accept="image/*">
         <button id="adminAddBtn" class="order-btn" onclick="addProductFromAdmin()">نشر الحساب فوراً</button>
       </div>
 
       <div class="panel">
-        <h2 style="color:#22ff88">الحسابات المنشورة في قسم الشراء</h2>
+        <h2 style="color:#38bdf8">🎟️ إدارة أكواد الخصم</h2>
+        <input id="promoCodeInput" placeholder="اسم الكود (مثال: ZAEM20)">
+        <input id="promoDiscountInput" type="number" min="1" placeholder="قيمة الخصم بالجنيه (مثال: 20)">
+        <button class="accept-btn" style="margin-top:6px" onclick="savePromoCode()">حفظ كود الخصم</button>
+        <div id="promoCodesList" style="margin-top:10px"></div>
+      </div>
+
+      <div class="panel">
+        <h2 style="color:#22ff88">✅ الحسابات المنشورة في قسم الشراء</h2>
         <div id="adminProducts"></div>
       </div>
     </div>
 
     <div id="admin-sec-orders" class="admin-section">
       <div class="panel">
-        <h2 style="color:#ffd000">الطلبات الواردة (شراء الحسابات والكوينز والعروض)</h2>
+        <h2 style="color:#ffd000">📥 الطلبات الواردة (شراء الحسابات والكوينز والعروض)</h2>
         <small>تحقق من وصول المبلغ بنفسك قبل قبول أو رفض أي طلب.</small>
         <div id="orders"></div>
       </div>
@@ -660,15 +1186,15 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
 
     <div id="admin-sec-complaints" class="admin-section">
       <div class="panel">
-        <h2 style="color:#ff4d79">الشكاوى الواردة</h2>
+        <h2 style="color:#ff4d79">🚨 الشكاوى والبلاغات الواردة</h2>
         <div id="adminComplaints"></div>
       </div>
     </div>
 
     <div id="admin-sec-chats" class="admin-section">
       <div class="panel">
-        <h2 style="color:#c084fc">محادثات العملاء</h2>
-        <small>اختر عميلاً لفتح المحادثة والرد عليه أو استلام بيانات الحساب والكود.</small>
+        <h2 style="color:#c084fc">💬 محادثات العملاء</h2>
+        <small>اختر عميلاً لفتح المحادثة والرد عليه أو إرسال بطاقة تسليم بيانات منظمة.</small>
         <div id="adminChatThreads"></div>
       </div>
 
@@ -679,6 +1205,12 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
           <input id="adminChatInput" placeholder="اكتب ردك للعميل...">
           <button class="accept-btn" onclick="sendAdminReply()">إرسال</button>
         </div>
+        <div class="delivery-card" style="margin-top:10px">
+          <small style="margin:0 0 6px 0;color:#7ef9b9">إرسال بطاقة تسليم بيانات / كود بنسخ فوري:</small>
+          <input id="deliveryTitleInput" placeholder="عنوان التسليم (مثال: بيانات حساب بيس)">
+          <input id="deliverySecretInput" placeholder="البيانات أو الكود أو كلمة المرور">
+          <button class="copy-btn" onclick="sendStructuredDelivery()">إرسال بطاقة التسليم</button>
+        </div>
       </div>
     </div>
   </section>
@@ -686,7 +1218,7 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
   <!-- صفحة 5: قسم الشكاوي -->
   <section id="page-complaints" class="page">
     <div class="panel">
-      <h2 style="color:#ff4d79">إرسال شكوى أو بلاغ للإدارة</h2>
+      <h2 style="color:#ff4d79">📩 إرسال شكوى أو بلاغ للإدارة</h2>
       <input id="compName" placeholder="اسمك">
       <input id="compContact" placeholder="رقم هاتفك أو وسيلة التواصل">
       <input id="compSubject" placeholder="عنوان الشكوى (مثال: تأخر طلب / مشكلة في حساب)">
@@ -699,7 +1231,7 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
   <!-- صفحة 6: قسم المحادثة المباشرة للعميل -->
   <section id="page-chat" class="page">
     <div class="panel">
-      <h2 style="color:#c084fc">المحادثة مع الإدارة</h2>
+      <h2 style="color:#c084fc">💬 المحادثة مع الإدارة</h2>
       <small>استخدم هذه المحادثة لإرسال بيانات الحساب أو الكود المطلوب عند شحن الكوينز أو البيع والشراء.</small>
       <select id="userChatContext">
         <option value="شحن كوينز / عروض">بخصوص شحن كوينز أو عرض</option>
@@ -707,6 +1239,13 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
         <option value="عرض حساب للبيع">بخصوص عرض حساب للبيع</option>
         <option value="استفسار عام">استفسار عام</option>
       </select>
+
+      <div class="quick-replies">
+        <button type="button" class="quick-chip" onclick="applyQuickReply('تم التحويل وبانتظار تأكيد الإدارة.')">تم التحويل وبانتظار التأكيد</button>
+        <button type="button" class="quick-chip" onclick="applyQuickReply('بيانات الحساب جاهزة للتسليم.')">بيانات الحساب جاهزة</button>
+        <button type="button" class="quick-chip" onclick="applyQuickReply('تم الاستلام بنجاح، شكراً لكم.')">تم الاستلام بنجاح</button>
+      </div>
+
       <div id="userChatMessages" class="chat-box"></div>
       <div class="chat-send-row">
         <input id="userChatInput" placeholder="اكتب رسالتك أو الحساب والكود هنا...">
@@ -716,10 +1255,27 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
   </section>
 </div>
 
+<!-- 15. تذييل سفلي أنيق ومختصر -->
+<footer class="store-footer">
+  <div><strong>ZAEM STORE</strong> — متجر الحسابات وشحن الكوينز</div>
+  <div style="margin-top:4px">فودافون كاش الرسمي: <strong>01277904942</strong> • الأسعار والتوفر محدثة لحظياً</div>
+</footer>
+
+<!-- 7. نافذة إشعارات أنيقة داخل التطبيق -->
+<div id="appToast" class="app-toast"></div>
+
+<!-- 9. زر العودة للأعلى عائم -->
+<button id="scrollTopBtn" class="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="العودة للأعلى">↑</button>
+
+<!-- نافذة تفاصيل الحساب السريعة -->
+<div class="modal-backdrop" id="quickViewModal">
+  <div class="modal-box" id="quickViewContent"></div>
+</div>
+
 <!-- نافذة كلمة سر الأدمن -->
 <div class="modal-backdrop" id="adminAuthModal">
   <div class="modal-box">
-    <h2 style="color:#22ff88;margin-top:0">دخول قسم الإدارة</h2>
+    <h2 style="color:#22ff88;margin-top:0">🛡️ دخول قسم الإدارة</h2>
     <p style="color:#c9d8eb;font-size:14px">هذا القسم خاص بصاحب التطبيق فقط لإدارة طلبات العرض والحسابات والطلبات والشكاوى والمحادثات.</p>
     <input id="adminPassInput" type="password" placeholder="أدخل كلمة سر الإدارة">
     <div style="margin-top:12px">
@@ -737,6 +1293,9 @@ small{color:#a4b8d1;display:block;margin-top:4px;line-height:1.45}
     <p style="margin:6px 0">رقم فودافون كاش: <strong>01277904942</strong></p>
     <input id="buyerName" placeholder="اسمك">
     <input id="buyerContact" placeholder="رقم هاتفك أو وسيلة التواصل">
+    <input id="buyerLast4" maxlength="4" placeholder="آخر 4 أرقام من رقم التحويل (اختياري)">
+    <input id="buyerPromoCode" placeholder="كود خصم إن وُجد (مثال: ZAEM10)" oninput="updateProductPromoPreview()">
+    <div id="productPromoPreviewBox"></div>
     <label>صورة إثبات التحويل:</label>
     <input id="proofFile" type="file" accept="image/*">
     <small>حجم الصورة أقل من 500 كيلوبايت.</small>
@@ -782,12 +1341,299 @@ let currentUser = JSON.parse(localStorage.getItem("zaemCurrentUser") || "null");
 let isAdminUnlocked = sessionStorage.getItem("zaemAdminUnlocked") === "true";
 let activeAdminSection = "accounts";
 let items = [];
-let listingRequests = [];
+let productsLoaded = false;
+let allListingRequests = [];
+let pendingListingRequests = [];
 let orders = [];
 let complaints = [];
+let reviewsList = [];
+let promoCodes = { ZAEM10: 10 };
 let allChats = {};
 let selectedAdminChatKey = null;
 let activeProductId = null;
+let compareIds = [];
+let flashEndTs = Date.now() + 4 * 60 * 60 * 1000;
+let toastTimer = null;
+
+function esc(str){
+  return String(str ?? "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
+}
+
+function showToast(msg){
+  const el = document.getElementById("appToast");
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 3200);
+}
+
+window.addEventListener("scroll", () => {
+  const btn = document.getElementById("scrollTopBtn");
+  if(!btn) return;
+  btn.classList.toggle("visible", window.scrollY > 260);
+});
+
+window.toggleFontSize = function(){
+  document.body.classList.toggle("large-text");
+};
+
+setInterval(()=>{
+  const el = document.getElementById("flashCountdown");
+  if(!el) return;
+  let rem = Math.max(0, Math.floor((flashEndTs - Date.now()) / 1000));
+  if(rem === 0) flashEndTs = Date.now() + 4 * 60 * 60 * 1000;
+  const h = String(Math.floor(rem / 3600)).padStart(2, "0");
+  const m = String(Math.floor((rem % 3600) / 60)).padStart(2, "0");
+  const s = String(rem % 60).padStart(2, "0");
+  el.textContent = `${h}:${m}:${s}`;
+}, 1000);
+
+function getAccountStatus(product){
+  const matchAccepted = orders.find(o => o.type === "حساب" && o.productId === product.key && o.status === "accepted");
+  if(matchAccepted) return { label: "تم البيع", cls: "sold-badge", locked: true };
+  const matchPending = orders.find(o => o.type === "حساب" && o.productId === product.key && o.status === "pending");
+  if(matchPending) return { label: "قيد الحجز", cls: "pending", locked: false };
+  return { label: "متاح للتسليم", cls: "accepted", locked: false };
+}
+
+function isNewAccount(product){
+  if(!product.createdAtTs) return false;
+  return (Date.now() - Number(product.createdAtTs)) <= 24 * 60 * 60 * 1000;
+}
+
+window.switchCardPhoto = function(key, which){
+  const p = items.find(x => x.key === key);
+  if(!p) return;
+  const imgEl = document.getElementById(`cardImg_${key}`);
+  const btn1 = document.getElementById(`galBtn1_${key}`);
+  const btn2 = document.getElementById(`galBtn2_${key}`);
+  if(!imgEl) return;
+
+  if(which === 2 && p.photoExtra){
+    imgEl.src = p.photoExtra;
+    if(btn1) btn1.classList.remove("active");
+    if(btn2) btn2.classList.add("active");
+  } else if(p.photo){
+    imgEl.src = p.photo;
+    if(btn1) btn1.classList.add("active");
+    if(btn2) btn2.classList.remove("active");
+  }
+};
+
+window.shareProduct = function(key){
+  const p = items.find(x => x.key === key);
+  if(!p) return;
+  const text = `حساب: ${p.name}\nالسعر: ${p.price} جنيه\nالتفاصيل: ${p.desc || "-"}\nالرابط: ${window.location.href}`;
+  if(navigator.share){
+    navigator.share({ title: p.name, text }).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(text).catch(()=>{});
+    showToast("تم نسخ تفاصيل الحساب ورابط المتجر للمشاركة.");
+  }
+};
+
+window.toggleCompare = function(key){
+  const idx = compareIds.indexOf(key);
+  if(idx >= 0) compareIds.splice(idx, 1);
+  else {
+    if(compareIds.length >= 2) compareIds.shift();
+    compareIds.push(key);
+  }
+  renderProducts();
+  renderCompareBox();
+};
+
+function renderCompareBox(){
+  const bar = document.getElementById("compareBar");
+  const area = document.getElementById("compareResultArea");
+  if(!bar || !area) return;
+
+  if(!compareIds.length){
+    bar.style.display = "none";
+    area.innerHTML = "";
+    return;
+  }
+
+  bar.style.display = "block";
+  bar.textContent = `المقارنة: تم اختيار ${compareIds.length} من 2 حسابات`;
+
+  if(compareIds.length < 2){
+    area.innerHTML = "";
+    return;
+  }
+
+  const a = items.find(x => x.key === compareIds[0]);
+  const b = items.find(x => x.key === compareIds[1]);
+  if(!a || !b){
+    area.innerHTML = "";
+    return;
+  }
+
+  area.innerHTML = `
+    <div class="compare-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong style="color:#00e5ff">مقارنة سريعة بين حسابين</strong>
+        <button class="secondary-btn" style="margin:0;padding:4px 9px;font-size:12px" onclick="compareIds=[];renderProducts();renderCompareBox()">إغلاق</button>
+      </div>
+      <div class="filter-row" style="margin-top:10px">
+        <div class="card-item" style="margin:0">
+          <div style="font-weight:bold">${esc(a.name)}</div>
+          <div class="price">${esc(a.price)} جنيه</div>
+          <small>${esc(a.desc || "-")}</small>
+        </div>
+        <div class="card-item" style="margin:0">
+          <div style="font-weight:bold">${esc(b.name)}</div>
+          <div class="price">${esc(b.price)} جنيه</div>
+          <small>${esc(b.desc || "-")}</small>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+window.openQuickView = function(key){
+  const p = items.find(x => x.key === key);
+  if(!p) return;
+  const st = getAccountStatus(p);
+  const favs = getUserFavorites();
+  const isFav = favs.includes(key);
+  const modal = document.getElementById("quickViewModal");
+  const box = document.getElementById("quickViewContent");
+
+  box.innerHTML = `
+    <span class="badge ${st.cls}">${st.label}</span>
+    <span class="badge verified-badge">حساب موثق</span>
+    ${isNewAccount(p) ? `<span class="badge new-badge">جديد</span>` : ""}
+    <h2 style="margin:6px 0;color:#00e5ff">${esc(p.name)}</h2>
+    <div class="price">${esc(p.price)} جنيه</div>
+    ${p.photo ? `<img src="${p.photo}" style="width:100%;max-height:210px;object-fit:contain;background:#09111d;border-radius:10px;margin-bottom:8px">` : ""}
+    ${p.photoExtra ? `<img src="${p.photoExtra}" style="width:100%;max-height:170px;object-fit:contain;background:#09111d;border-radius:10px;margin-bottom:8px">` : ""}
+    <p style="margin:8px 0;line-height:1.55">${esc(p.desc || "لا توجد تفاصيل إضافية.")}</p>
+    <div style="margin-top:12px">
+      ${!st.locked ? `<button class="order-btn" onclick="closeQuickView();openOrderModal('${p.key}')">شراء الحساب الآن</button>` : `<small style="color:#ff9aa2">هذا الحساب تم بيعه بالفعل.</small>`}
+      <button class="secondary-btn" onclick="toggleFavorite('${p.key}');openQuickView('${p.key}')">${isFav ? "★ في المفضلة" : "☆ أضف للمفضلة"}</button>
+      <button class="copy-btn" onclick="shareProduct('${p.key}')">مشاركة</button>
+      <button class="reject-btn" onclick="closeQuickView()">إغلاق</button>
+    </div>
+  `;
+  modal.style.display = "flex";
+};
+
+window.closeQuickView = function(){
+  document.getElementById("quickViewModal").style.display = "none";
+};
+
+window.reportProduct = async function(key){
+  const p = items.find(x => x.key === key);
+  if(!p) return;
+  const reason = prompt(`سبب الإبلاغ عن الحساب (${p.name}):`);
+  if(!reason || !reason.trim()) return;
+
+  const compRef = push(ref(db, "complaints"));
+  await set(compRef, {
+    name: currentUser?.name || "عميل",
+    contact: currentUser?.identifier || "-",
+    subject: `بلاغ عن حساب: ${p.name}`,
+    details: reason.trim(),
+    status: "open",
+    createdAt: new Date().toLocaleString("ar-EG"),
+    createdAtTs: Date.now()
+  });
+  showToast("تم إرسال البلاغ إلى الإدارة للمراجعة.");
+};
+
+function buildOrderStepper(status){
+  const st = status || "pending";
+  if(st === "rejected"){
+    return `
+      <div class="order-stepper">
+        <div class="step-seg done">1. تم الإرسال</div>
+        <div class="step-seg rejected-step">2. تم الرفض</div>
+        <div class="step-seg">3. مكتمل</div>
+      </div>
+    `;
+  }
+  const acceptedDone = st === "accepted";
+  return `
+    <div class="order-stepper">
+      <div class="step-seg done">1. قيد المراجعة</div>
+      <div class="step-seg ${acceptedDone ? "done" : ""}">2. مقبول</div>
+      <div class="step-seg ${acceptedDone ? "done" : ""}">3. جاهز للتسليم</div>
+    </div>
+  `;
+}
+
+function buildNotificationsList(){
+  if(!currentUser) return [];
+  const list = [];
+
+  orders.filter(o =>
+    (currentUser.id && o.ownerId === currentUser.id) ||
+    (currentUser.identifier && String(o.ownerIdentifier || o.buyerContact || "").toLowerCase() === String(currentUser.identifier).toLowerCase())
+  ).forEach(o => {
+    list.push({
+      title: `طلب ${o.type || ""}: ${o.itemName || ""}`,
+      detail: `الحالة الحالية: ${o.status === "accepted" ? "مقبول" : o.status === "rejected" ? "مرفوض" : "قيد المراجعة"}`,
+      time: o.createdAt || "",
+      ts: o.createdAtTs || 0
+    });
+  });
+
+  allListingRequests.filter(r =>
+    (currentUser.id && r.ownerId === currentUser.id) ||
+    (currentUser.identifier && String(r.ownerIdentifier || "").toLowerCase() === String(currentUser.identifier).toLowerCase())
+  ).forEach(r => {
+    list.push({
+      title: `عرض بيع: ${r.name || ""}`,
+      detail: r.status === "rejected"
+        ? `مرفوض — السبب: ${r.rejectionReason || "-"}`
+        : r.status === "approved" ? "مقبول ومنشور" : "قيد المراجعة",
+      time: r.createdAt || "",
+      ts: r.createdAtTs || 0
+    });
+  });
+
+  return list.sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 12);
+}
+
+function renderNotificationsInProfile(){
+  const box = document.getElementById("myNotificationsContainer");
+  const homeBadge = document.getElementById("homeNotifBadge");
+  const notifs = buildNotificationsList();
+  if(homeBadge) homeBadge.textContent = String(notifs.length);
+  if(!box) return;
+
+  if(!notifs.length){
+    box.innerHTML = "<p>لا توجد تنبيهات جديدة حالياً.</p>";
+    return;
+  }
+
+  box.innerHTML = notifs.map(n => `
+    <div class="notif-item">
+      <div style="font-weight:bold;color:#00e5ff">${esc(n.title)}</div>
+      <div style="margin:4px 0">${esc(n.detail)}</div>
+      <small>${esc(n.time)}</small>
+    </div>
+  `).join("");
+}
+
+function renderAdminStats(){
+  const grid = document.getElementById("adminStatsGrid");
+  if(!grid || !isAdminUnlocked) return;
+  const pendingOrdersCount = orders.filter(o => (o.status || "pending") === "pending").length;
+  const openComplaintsCount = complaints.filter(c => c.status !== "resolved").length;
+  const chatsCount = Object.keys(allChats || {}).length;
+
+  grid.innerHTML = `
+    <div class="stat-card"><small>الحسابات المعروضة</small><div class="stat-num">${items.length}</div></div>
+    <div class="stat-card"><small>طلبات قيد المراجعة</small><div class="stat-num" style="color:#ffd454">${pendingOrdersCount > 0 ? `<span class="pulse-dot"></span>` : ""}${pendingOrdersCount}</div></div>
+    <div class="stat-card"><small>شكاوى وبلاغات مفتوحة</small><div class="stat-num" style="color:#ff9bb8">${openComplaintsCount}</div></div>
+    <div class="stat-card"><small>محادثات العملاء</small><div class="stat-num" style="color:#c084fc">${chatsCount}</div></div>
+  `;
+}
 
 function setConnectionUI(connected, label){
   const dot = document.getElementById("connDot");
@@ -797,87 +1643,359 @@ function setConnectionUI(connected, label){
   txt.textContent = label || (connected ? "متصل بالسحابة (تحديث فوري)" : "غير متصل بقاعدة البيانات");
 }
 
-onValue(ref(db, ".info/connected"), (snap)=>{
-  setConnectionUI(Boolean(snap.val()));
-});
-
-onValue(ref(db, "users"), (snap)=>{
-  const val = snap.val() || {};
-  usersList = Object.entries(val).map(([key, u]) => ({ key, ...u }));
-});
-
-onValue(ref(db, "products"), (snap)=>{
-  const val = snap.val() || {};
-  items = Object.entries(val)
-    .map(([key, p]) => ({ key, ...p }))
-    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
-  document.getElementById("onlineCount").textContent = "الحسابات: " + items.length;
-  renderProducts();
-});
-
-onValue(ref(db, "listing_requests"), (snap)=>{
-  const val = snap.val() || {};
-  listingRequests = Object.entries(val)
-    .map(([key, r]) => ({ key, ...r }))
-    .filter(r => r.status !== "approved" && r.status !== "rejected")
-    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
-  if(isAdminUnlocked) renderListingRequests();
-});
-
-onValue(ref(db, "orders"), (snap)=>{
-  const val = snap.val() || {};
-  orders = Object.entries(val)
-    .map(([key, o]) => ({ key, ...o }))
-    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
-  if(isAdminUnlocked) renderOrders();
-});
-
-onValue(ref(db, "complaints"), (snap)=>{
-  const val = snap.val() || {};
-  complaints = Object.entries(val)
-    .map(([key, c]) => ({ key, ...c }))
-    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
-  if(isAdminUnlocked) renderComplaints();
-});
-
-onValue(ref(db, "chats"), (snap)=>{
-  allChats = snap.val() || {};
-  renderUserChatMessages();
-  if(isAdminUnlocked){
-    renderAdminChatThreads();
-    renderAdminActiveChat();
-  }
-});
-
 function getUserChatKey(user){
   if(!user) return "guest";
   const raw = String(user.identifier || user.id || user.name || "user").toLowerCase();
   return raw.replace(/[.#$/\[\]]/g, "_");
 }
 
-window.switchAdminSection = function(secKey){
-  activeAdminSection = secKey;
-  document.getElementById("adminTabAccounts").classList.toggle("active", secKey === "accounts");
-  document.getElementById("adminTabOrders").classList.toggle("active", secKey === "orders");
-  document.getElementById("adminTabComplaints").classList.toggle("active", secKey === "complaints");
-  document.getElementById("adminTabChats").classList.toggle("active", secKey === "chats");
+function getFavoritesKey(){
+  return `zaemFavs_${getUserChatKey(currentUser)}`;
+}
 
-  document.getElementById("admin-sec-accounts").classList.toggle("active", secKey === "accounts");
-  document.getElementById("admin-sec-orders").classList.toggle("active", secKey === "orders");
-  document.getElementById("admin-sec-complaints").classList.toggle("active", secKey === "complaints");
-  document.getElementById("admin-sec-chats").classList.toggle("active", secKey === "chats");
+function getUserFavorites(){
+  if(!currentUser) return [];
+  return JSON.parse(localStorage.getItem(getFavoritesKey()) || "[]");
+}
 
-  if(secKey === "accounts"){
-    renderListingRequests();
-    renderProducts();
-  } else if(secKey === "orders"){
-    renderOrders();
-  } else if(secKey === "complaints"){
-    renderComplaints();
-  } else if(secKey === "chats"){
-    renderAdminChatThreads();
-    renderAdminActiveChat();
+window.toggleFavorite = function(productKey){
+  if(!currentUser) return;
+  const favs = getUserFavorites();
+  const idx = favs.indexOf(productKey);
+  if(idx >= 0){
+    favs.splice(idx, 1);
+    showToast("تمت الإزالة من المفضلة.");
+  } else {
+    favs.push(productKey);
+    showToast("تمت الإضافة إلى المفضلة.");
   }
+  localStorage.setItem(getFavoritesKey(), JSON.stringify(favs));
+  renderProducts();
+  renderFavoritesInProfile();
+};
+
+function renderFavoritesInProfile(){
+  const box = document.getElementById("myFavoritesContainer");
+  if(!box || !currentUser) return;
+  const favs = getUserFavorites();
+  const favItems = items.filter(p => favs.includes(p.key));
+  if(!favItems.length){
+    box.innerHTML = "<p>لا توجد حسابات مضافة إلى المفضلة حالياً.</p>";
+    return;
+  }
+  box.innerHTML = favItems.map(p => `
+    <div class="card-item">
+      <div style="font-weight:bold">${esc(p.name)}</div>
+      <div class="price">${esc(p.price)} جنيه</div>
+      <div>${esc(p.desc || "")}</div>
+      <div style="margin-top:8px">
+        <button class="accept-btn" onclick="openPage('buy', 'قسم الشراء'); setTimeout(()=>openOrderModal('${p.key}'), 60)">شراء الآن</button>
+        <button class="secondary-btn" onclick="toggleFavorite('${p.key}')">إزالة من المفضلة</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderMyOrdersInProfile(){
+  const box = document.getElementById("myOrdersContainer");
+  if(!box || !currentUser) return;
+
+  const mine = orders.filter(o =>
+    (currentUser.id && o.ownerId === currentUser.id) ||
+    (currentUser.identifier && String(o.ownerIdentifier || o.buyerContact || "").toLowerCase() === String(currentUser.identifier).toLowerCase()) ||
+    (currentUser.name && o.buyerName === currentUser.name)
+  );
+
+  if(!mine.length){
+    box.innerHTML = "<p>لا توجد طلبات شراء أو شحن مسجلة لحسابك حتى الآن.</p>";
+    return;
+  }
+
+  const stMap = {
+    pending: { label: "قيد المراجعة", cls: "pending" },
+    accepted: { label: "مقبول", cls: "accepted" },
+    rejected: { label: "مرفوض", cls: "rejected" }
+  };
+
+  box.innerHTML = mine.map(o => {
+    const st = stMap[o.status || "pending"] || stMap.pending;
+    return `
+      <div class="order-card">
+        <span class="badge ${st.cls}">${st.label}</span>
+        ${buildOrderStepper(o.status)}
+        <div><strong>النوع:</strong> ${esc(o.type || "")}</div>
+        <div><strong>الطلب:</strong> ${esc(o.itemName || "")} (${esc(o.price || "")})</div>
+        ${o.last4 ? `<div><strong>آخر 4 أرقام:</strong> ${esc(o.last4)}</div>` : ""}
+        <small>التاريخ: ${esc(o.createdAt || "")}</small>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderProfilePage(){
+  if(!currentUser) return;
+  const avatarBox = document.getElementById("profileAvatarBox");
+  const initial = (currentUser.name || "Z").trim().charAt(0).toUpperCase() || "Z";
+
+  if(currentUser.avatar){
+    avatarBox.innerHTML = `<img src="${currentUser.avatar}" alt="${esc(currentUser.name)}">`;
+  } else {
+    avatarBox.innerHTML = `<span class="profile-avatar-placeholder">${esc(initial)}</span>`;
+  }
+
+  document.getElementById("profileDisplayName").textContent = currentUser.name || "عميل";
+  document.getElementById("profileDisplayIdentifier").textContent = `وسيلة التواصل: ${currentUser.identifier || "-"}`;
+  document.getElementById("profileDisplayJoined").textContent = `تاريخ الإنشاء: ${currentUser.createdAt || "-"}`;
+
+  document.getElementById("profileDetailsSummary").innerHTML = `
+    <div><strong>الاسم:</strong> ${esc(currentUser.name || "-")}</div>
+    <div><strong>الهاتف / البريد:</strong> ${esc(currentUser.identifier || "-")}</div>
+    <div><strong>معرف الحساب:</strong> ${esc(currentUser.id || "-")}</div>
+    <div><strong>تاريخ التسجيل:</strong> ${esc(currentUser.createdAt || "-")}</div>
+  `;
+
+  if(document.activeElement?.id !== "profileNameInput"){
+    document.getElementById("profileNameInput").value = currentUser.name || "";
+  }
+  if(document.activeElement?.id !== "profileIdentifierInput"){
+    document.getElementById("profileIdentifierInput").value = currentUser.identifier || "";
+  }
+
+  renderNotificationsInProfile();
+  renderFavoritesInProfile();
+  renderMyOrdersInProfile();
+}
+
+window.saveProfileData = async function(){
+  if(!currentUser) return;
+  const btn = document.getElementById("saveProfileBtn");
+  const newName = document.getElementById("profileNameInput").value.trim();
+  const newIdentifier = document.getElementById("profileIdentifierInput").value.trim();
+  const file = document.getElementById("profilePhotoInput").files[0];
+
+  if(!newName || !newIdentifier){
+    showToast("يرجى إدخال الاسم ورقم الهاتف أو البريد الإلكتروني.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الحفظ...";
+
+  try{
+    let avatarData = currentUser.avatar || "";
+    if(file){
+      avatarData = await fileToCompressedDataURL(file, 500);
+    }
+
+    const updatedUser = {
+      ...currentUser,
+      name: newName,
+      identifier: newIdentifier,
+      avatar: avatarData
+    };
+
+    const dbRecord = usersList.find(u =>
+      (currentUser.id && u.id === currentUser.id) ||
+      (currentUser.identifier && String(u.identifier || "").toLowerCase() === String(currentUser.identifier).toLowerCase())
+    );
+
+    if(dbRecord?.key){
+      await update(ref(db, `users/${dbRecord.key}`), {
+        name: newName,
+        identifier: newIdentifier,
+        avatar: avatarData
+      });
+    }
+
+    currentUser = updatedUser;
+    localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
+    document.getElementById("profilePhotoInput").value = "";
+    syncAuthUI();
+    renderProfilePage();
+    showToast("تم حفظ بياناتك وصورة حسابك بنجاح.");
+  } catch(err){
+    showToast(err.message || "تعذر حفظ البيانات.");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "حفظ بياناتي وصورتي";
+  }
+};
+
+window.removeProfilePhoto = async function(){
+  if(!currentUser || !currentUser.avatar) return;
+  if(!confirm("هل تريد إزالة صورة الحساب؟")) return;
+
+  const updatedUser = { ...currentUser, avatar: "" };
+  const dbRecord = usersList.find(u =>
+    (currentUser.id && u.id === currentUser.id) ||
+    (currentUser.identifier && String(u.identifier || "").toLowerCase() === String(currentUser.identifier).toLowerCase())
+  );
+
+  if(dbRecord?.key){
+    await update(ref(db, `users/${dbRecord.key}`), { avatar: "" });
+  }
+
+  currentUser = updatedUser;
+  localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
+  renderProfilePage();
+  showToast("تمت إزالة صورة الحساب.");
+};
+
+function syncAuthUI(){
+  const backBtn = document.getElementById("backBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const activePage = document.querySelector(".page.active");
+  const activeId = activePage ? activePage.id : "";
+
+  if(currentUser){
+    logoutBtn.classList.add("visible");
+    document.getElementById("welcomeBanner").textContent = `أهلاً بك يا ${currentUser.name} — أقسام التطبيق`;
+    renderNotificationsInProfile();
+    renderProfilePage();
+    if(activeId === "page-auth"){
+      openPage("home", "الصفحة الرئيسية");
+    }
+  } else {
+    logoutBtn.classList.remove("visible");
+    backBtn.classList.remove("visible");
+    document.getElementById("headerSubtitle").textContent = "تسجيل الدخول أو إنشاء حساب";
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page-auth").classList.add("active");
+  }
+}
+
+window.switchAuthMode = function(mode){
+  const isLogin = mode === "login";
+  document.getElementById("tabLoginBtn").classList.toggle("active", isLogin);
+  document.getElementById("tabRegisterBtn").classList.toggle("active", !isLogin);
+  document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
+  document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+};
+
+window.handleRegister = async function(){
+  const name = document.getElementById("regName").value.trim();
+  const identifier = document.getElementById("regIdentifier").value.trim();
+  const password = document.getElementById("regPassword").value;
+
+  if(!name || !identifier || password.length < 6){
+    showToast("أدخل الاسم، رقم الهاتف أو البريد، وكلمة مرور 6 أحرف على الأقل.");
+    return;
+  }
+
+  const normalizedId = identifier.toLowerCase();
+  const exists = usersList.some(u => String(u.identifier || "").toLowerCase() === normalizedId);
+  if(exists){
+    showToast("هذا الحساب مسجل بالفعل، يمكنك تسجيل الدخول مباشرة.");
+    switchAuthMode("login");
+    document.getElementById("loginIdentifier").value = identifier;
+    return;
+  }
+
+  const newUserRef = push(ref(db, "users"));
+  const userObj = {
+    id: newUserRef.key,
+    name,
+    identifier,
+    password,
+    avatar: "",
+    createdAt: new Date().toLocaleString("ar-EG")
+  };
+  await set(newUserRef, userObj);
+
+  currentUser = userObj;
+  localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
+  syncAuthUI();
+  openPage("home", "الصفحة الرئيسية");
+};
+
+window.handleLogin = function(){
+  const identifier = document.getElementById("loginIdentifier").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+
+  if(!identifier || !password){
+    showToast("أدخل بيانات الدخول وكلمة المرور.");
+    return;
+  }
+
+  const found = usersList.find(u =>
+    String(u.identifier || "").toLowerCase() === identifier && u.password === password
+  );
+
+  if(!found){
+    showToast("بيانات الدخول غير صحيحة أو الحساب غير مسجل.");
+    return;
+  }
+
+  currentUser = found;
+  localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
+  syncAuthUI();
+  openPage("home", "الصفحة الرئيسية");
+};
+
+window.logoutUser = function(){
+  currentUser = null;
+  localStorage.removeItem("zaemCurrentUser");
+  isAdminUnlocked = false;
+  sessionStorage.removeItem("zaemAdminUnlocked");
+  syncAuthUI();
+};
+
+window.openPage = function(name, title){
+  if(!currentUser && name !== "auth"){
+    syncAuthUI();
+    return;
+  }
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + name).classList.add("active");
+  document.getElementById("headerSubtitle").textContent = title || "ZAEM STORE";
+  const backBtn = document.getElementById("backBtn");
+  if(name === "home") backBtn.classList.remove("visible");
+  else backBtn.classList.add("visible");
+
+  if(name === "profile"){
+    renderProfilePage();
+  }
+  if(name === "buy"){
+    renderProducts();
+    renderCompareBox();
+    renderReviews();
+  }
+  if(name === "sell"){
+    if(currentUser && !document.getElementById("sellerName").value){
+      document.getElementById("sellerName").value = currentUser.name;
+    }
+    renderMyListings();
+  }
+  if(name === "coins"){
+    if(currentUser && !document.getElementById("coinBuyerName").value){
+      document.getElementById("coinBuyerName").value = currentUser.name;
+    }
+    updateCoinPromoPreview();
+  }
+  if(name === "complaints" && currentUser){
+    if(!document.getElementById("compName").value) document.getElementById("compName").value = currentUser.name;
+    if(!document.getElementById("compContact").value) document.getElementById("compContact").value = currentUser.identifier || "";
+  }
+  if(name === "chat"){
+    renderUserChatMessages();
+  }
+  window.scrollTo(0, 0);
+};
+
+window.goHome = function(){
+  openPage("home", "الصفحة الرئيسية");
+};
+
+window.copyWallet = function(msgId){
+  navigator.clipboard?.writeText(WALLET_NUMBER).catch(()=>{});
+  const el = document.getElementById(msgId);
+  if(el) el.textContent = "تم نسخ الرقم: " + WALLET_NUMBER;
+  showToast("تم نسخ رقم فودافون كاش: " + WALLET_NUMBER);
+};
+
+window.copySecretText = function(text){
+  navigator.clipboard?.writeText(text).catch(()=>{});
+  showToast("تم نسخ البيانات بنجاح.");
 };
 
 window.updateSellFeePreview = function(){
@@ -891,743 +2009,1016 @@ window.updateAdminFeePreview = function(){
   const base = Number(document.getElementById("adminBasePrice").value) || 0;
   const finalPrice = base > 0 ? base + AUTO_MARKUP : AUTO_MARKUP;
   document.getElementById("adminFeePreview").innerHTML =
-    `السعر الأساسي: <strong>${base} جنيه</strong> + إضافة تلقائية <strong>${AUTO_MARKUP} جنيه</strong> = السعر النهائي: <strong>${finalPrice} جنيه</strong>`;
+    `السعر الأساسي: <strong>${base} جنيه</strong> + إضافة تلقائية <strong>${AUTO_MARKUP} جنيه</strong> = السعر النهائي المعروض: <strong>${finalPrice} جنيه</strong>`;
 };
 
-function formatTimeAgo(ts){
-  if(!ts) return "متاح الآن";
-  const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
-  if(diffSec < 60) return "نُشر الآن";
-  const mins = Math.floor(diffSec / 60);
-  if(mins < 60) return `نُشر منذ ${mins} دقيقة`;
-  const hrs = Math.floor(mins / 60);
-  if(hrs < 24) return `نُشر منذ ${hrs} ساعة`;
-  const days = Math.floor(hrs / 24);
-  return `نُشر منذ ${days} يوم`;
-}
+window.switchAdminSection = function(secKey){
+  activeAdminSection = secKey;
+  renderAdminStats();
+  document.getElementById("adminTabAccounts").classList.toggle("active", secKey === "accounts");
+  document.getElementById("adminTabOrders").classList.toggle("active", secKey === "orders");
+  document.getElementById("adminTabComplaints").classList.toggle("active", secKey === "complaints");
+  document.getElementById("adminTabChats").classList.toggle("active", secKey === "chats");
 
-setInterval(()=>{
-  if(items.length > 0) renderProducts();
-}, 30000);
+  document.getElementById("admin-sec-accounts").classList.toggle("active", secKey === "accounts");
+  document.getElementById("admin-sec-orders").classList.toggle("active", secKey === "orders");
+  document.getElementById("admin-sec-complaints").classList.toggle("active", secKey === "complaints");
+  document.getElementById("admin-sec-chats").classList.toggle("active", secKey === "chats");
 
-window.switchAuthMode = function(mode){
-  const isLogin = mode === "login";
-  document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
-  document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
-  document.getElementById("tabLoginBtn").classList.toggle("active", isLogin);
-  document.getElementById("tabRegisterBtn").classList.toggle("active", !isLogin);
+  if(secKey === "accounts"){
+    renderListingRequests();
+    renderProducts();
+    renderPromoCodesAdmin();
+  } else if(secKey === "orders"){
+    renderOrders();
+  } else if(secKey === "complaints"){
+    renderComplaints();
+  } else if(secKey === "chats"){
+    renderAdminChatThreads();
+    renderAdminActiveChat();
+  }
 };
 
-window.handleRegister = async function(){
-  const name = document.getElementById("regName").value.trim();
-  const identifier = document.getElementById("regIdentifier").value.trim().toLowerCase();
-  const password = document.getElementById("regPassword").value.trim();
-  const btn = document.getElementById("regSubmitBtn");
-
-  if(!name || !identifier || !password){
-    alert("اكتب الاسم ورقم الهاتف أو الإيميل وكلمة المرور");
-    return;
-  }
-  if(password.length < 6){
-    alert("كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل");
-    return;
-  }
-  if(usersList.some(u => u.identifier === identifier)){
-    alert("هذا الرقم أو الإيميل مسجل بالفعل، سجّل الدخول");
-    switchAuthMode("login");
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "جاري إنشاء الحساب...";
-  try{
-    const newUserRef = push(ref(db, "users"));
-    const newUser = {
-      id: Date.now(),
-      name,
-      identifier,
-      password,
-      createdAtTs: Date.now()
+function fileToCompressedDataURL(file, maxSizeKB = 500){
+  return new Promise((resolve, reject) => {
+    if(!file){ resolve(""); return; }
+    if(file.size > maxSizeKB * 1024){
+      reject(new Error(`حجم الصورة أكبر من ${maxSizeKB} كيلوبايت.`));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxW = 900;
+        let w = img.width, h = img.height;
+        if(w > maxW){
+          h = Math.round((h * maxW) / w);
+          w = maxW;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        const out = canvas.toDataURL("image/jpeg", 0.78);
+        if(out.length > 950000){
+          reject(new Error("الصورة كبيرة بعد التحويل، اختر صورة أصغر."));
+          return;
+        }
+        resolve(out);
+      };
+      img.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+      img.src = reader.result;
     };
-    await set(newUserRef, newUser);
-    currentUser = { id: newUser.id, name: newUser.name, identifier: newUser.identifier };
-    localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
-    enterApp();
-  } catch(err){
-    alert("تعذر إنشاء الحساب أونلاين، تأكد من الاتصال والإنترنت");
-  } finally{
-    btn.disabled = false;
-    btn.textContent = "إنشاء الحساب والدخول";
-  }
-};
-
-window.handleLogin = async function(){
-  const identifier = document.getElementById("loginIdentifier").value.trim().toLowerCase();
-  const password = document.getElementById("loginPassword").value.trim();
-
-  if(!identifier || !password){
-    alert("اكتب رقم الهاتف أو الإيميل وكلمة المرور");
-    return;
-  }
-
-  const found = usersList.find(u => u.identifier === identifier && u.password === password);
-  if(!found){
-    alert("بيانات الدخول غير صحيحة أو الحساب غير مسجل");
-    return;
-  }
-
-  currentUser = { id: found.id, name: found.name, identifier: found.identifier };
-  localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
-  enterApp();
-};
-
-function enterApp(){
-  if(!currentUser) return;
-  document.getElementById("logoutBtn").classList.add("visible");
-  document.getElementById("welcomeBanner").textContent = "أهلاً يا " + currentUser.name + " — اختر القسم";
-  prefillUserFields();
-  goHome();
+    reader.onerror = () => reject(new Error("فشل تحميل الملف."));
+    reader.readAsDataURL(file);
+  });
 }
 
-window.logoutUser = function(){
-  currentUser = null;
-  isAdminUnlocked = false;
-  selectedAdminChatKey = null;
-  sessionStorage.removeItem("zaemAdminUnlocked");
-  localStorage.removeItem("zaemCurrentUser");
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById("page-auth").classList.add("active");
-  document.getElementById("backBtn").classList.remove("visible");
-  document.getElementById("logoutBtn").classList.remove("visible");
-  document.getElementById("headerSubtitle").textContent = "سجّل الدخول للمتابعة";
-};
-
-function prefillUserFields(){
-  if(!currentUser) return;
-  document.getElementById("coinBuyerName").value = currentUser.name;
-  document.getElementById("coinAccountId").value = currentUser.identifier;
-  document.getElementById("sellerName").value = currentUser.name + " (" + currentUser.identifier + ")";
-  document.getElementById("compName").value = currentUser.name;
-  document.getElementById("compContact").value = currentUser.identifier;
+function applyPromoDiscount(rawPriceText, promoCodeRaw){
+  const code = String(promoCodeRaw || "").trim().toUpperCase();
+  const numericMatch = String(rawPriceText || "").replace(/,/g, "").match(/\d+/);
+  const baseNum = numericMatch ? Number(numericMatch[0]) : 0;
+  if(!code || !promoCodes[code] || !baseNum){
+    return { finalText: rawPriceText, discount: 0, promoCode: "", baseNum, afterNum: baseNum };
+  }
+  const disc = Number(promoCodes[code]) || 0;
+  const after = Math.max(0, baseNum - disc);
+  return { finalText: `${after} جنيه (خصم ${disc} بكود ${code})`, discount: disc, promoCode: code, baseNum, afterNum: after };
 }
 
-window.openAdminGate = function(){
-  if(!currentUser){ logoutUser(); return; }
-  if(isAdminUnlocked){
-    showAdminPage();
-    return;
-  }
-  document.getElementById("adminPassInput").value = "";
-  document.getElementById("adminAuthModal").style.display = "flex";
-};
-
-window.closeAdminAuthModal = function(){
-  document.getElementById("adminAuthModal").style.display = "none";
-};
-
-window.verifyAdminPass = function(){
-  const pass = document.getElementById("adminPassInput").value;
-  if(pass !== ADMIN_PASS){
-    alert("كلمة سر الإدارة غير صحيحة");
-    return;
-  }
-  isAdminUnlocked = true;
-  sessionStorage.setItem("zaemAdminUnlocked", "true");
-  closeAdminAuthModal();
-  showAdminPage();
-};
-
-function showAdminPage(){
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById("page-admin").classList.add("active");
-  document.getElementById("headerSubtitle").textContent = "قسم الإدارة";
-  document.getElementById("backBtn").classList.add("visible");
-  switchAdminSection(activeAdminSection);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-window.openPage = function(pageKey, titleText){
-  if(!currentUser){ logoutUser(); return; }
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById("page-" + pageKey).classList.add("active");
-  document.getElementById("headerSubtitle").textContent = titleText;
-  document.getElementById("backBtn").classList.add("visible");
-  if(pageKey === "chat") renderUserChatMessages();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
-window.goHome = function(){
-  if(!currentUser){ logoutUser(); return; }
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById("page-home").classList.add("active");
-  document.getElementById("headerSubtitle").textContent = "حساب: " + currentUser.name;
-  document.getElementById("backBtn").classList.remove("visible");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
-window.copyWallet = function(msgId){
-  const el = document.getElementById(msgId);
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(WALLET_NUMBER).then(()=>{
-      el.textContent = "تم نسخ الرقم: " + WALLET_NUMBER;
-    }).catch(()=>{
-      el.textContent = "الرقم: " + WALLET_NUMBER;
-    });
+window.updateCoinPromoPreview = function(){
+  const box = document.getElementById("coinPromoPreviewBox");
+  const select = document.getElementById("coinPackage");
+  const promoRaw = document.getElementById("coinPromoCode")?.value || "";
+  if(!box || !select) return;
+  const rawPrice = select.options[select.selectedIndex]?.getAttribute("data-price") || "";
+  const calc = applyPromoDiscount(rawPrice, promoRaw);
+  if(calc.discount > 0){
+    box.innerHTML = `<div class="promo-preview-box">السعر بعد الخصم: <span class="old-price-strike">${calc.baseNum} جنيه</span> <strong>${calc.afterNum} جنيه</strong> (وفّرت ${calc.discount} جنيه)</div>`;
   } else {
-    el.textContent = "الرقم: " + WALLET_NUMBER;
+    box.innerHTML = "";
   }
 };
 
-/* إرسال رسالة من العميل للإدارة */
-window.sendUserMessage = async function(){
-  if(!currentUser){ logoutUser(); return; }
-  const inputEl = document.getElementById("userChatInput");
-  const ctxEl = document.getElementById("userChatContext");
-  const text = inputEl.value.trim();
-  if(!text) return;
-
-  const chatKey = getUserChatKey(currentUser);
-  const threadRef = ref(db, "chats/" + chatKey);
-  const msgRef = push(ref(db, "chats/" + chatKey + "/messages"));
-
-  await update(threadRef, {
-    userName: currentUser.name,
-    userContact: currentUser.identifier,
-    lastTopic: ctxEl.value,
-    lastMessage: text,
-    updatedAtTs: Date.now()
-  });
-
-  await set(msgRef, {
-    sender: "user",
-    senderName: currentUser.name,
-    topic: ctxEl.value,
-    text,
-    createdAt: new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" }),
-    createdAtTs: Date.now()
-  });
-
-  inputEl.value = "";
+window.updateProductPromoPreview = function(){
+  const box = document.getElementById("productPromoPreviewBox");
+  const p = items.find(x => x.key === activeProductId);
+  const promoRaw = document.getElementById("buyerPromoCode")?.value || "";
+  if(!box || !p) return;
+  const calc = applyPromoDiscount(`${p.price} جنيه`, promoRaw);
+  if(calc.discount > 0){
+    box.innerHTML = `<div class="promo-preview-box">السعر بعد الخصم: <span class="old-price-strike">${calc.baseNum} جنيه</span> <strong>${calc.afterNum} جنيه</strong> (وفّرت ${calc.discount} جنيه)</div>`;
+  } else {
+    box.innerHTML = "";
+  }
 };
 
-function renderUserChatMessages(){
-  const box = document.getElementById("userChatMessages");
-  if(!box || !currentUser) return;
-  const chatKey = getUserChatKey(currentUser);
-  const thread = allChats[chatKey] || {};
-  const msgs = Object.values(thread.messages || {}).sort((a, b) => (a.createdAtTs || 0) - (b.createdAtTs || 0));
-
-  if(msgs.length === 0){
-    box.innerHTML = `<small style="text-align:center;color:#9eb3cc">ابدأ المحادثة مع الإدارة لإرسال بيانات الحساب أو الكود.</small>`;
+window.savePromoCode = async function(){
+  const code = document.getElementById("promoCodeInput").value.trim().toUpperCase();
+  const disc = Number(document.getElementById("promoDiscountInput").value);
+  if(!code || !disc || disc <= 0){
+    showToast("أدخل اسم الكود وقيمة الخصم بالجنيه.");
     return;
   }
+  await update(ref(db, "promo_codes"), { [code]: disc });
+  document.getElementById("promoCodeInput").value = "";
+  document.getElementById("promoDiscountInput").value = "";
+  showToast(`تم حفظ كود الخصم ${code} بقيمة ${disc} جنيه.`);
+};
 
-  box.innerHTML = msgs.map(m => `
-    <div class="msg-bubble ${m.sender === "admin" ? "msg-admin" : "msg-user"}">
-      <div>${m.text}</div>
-      <div class="msg-meta">${m.sender === "admin" ? "الإدارة" : (m.senderName || "أنت")}${m.topic ? " • " + m.topic : ""} • ${m.createdAt || ""}</div>
+window.deletePromoCode = async function(code){
+  await remove(ref(db, `promo_codes/${code}`));
+  showToast(`تم حذف كود ${code}.`);
+};
+
+function renderPromoCodesAdmin(){
+  const box = document.getElementById("promoCodesList");
+  if(!box || !isAdminUnlocked) return;
+  const entries = Object.entries(promoCodes || {});
+  if(!entries.length){
+    box.innerHTML = "<small>لا توجد أكواد خصم مضافة.</small>";
+    return;
+  }
+  box.innerHTML = entries.map(([code, val]) => `
+    <div class="offer-row">
+      <span><strong>${esc(code)}</strong> — خصم <strong class="offer-price">${esc(val)} جنيه</strong></span>
+      <button class="delete" style="margin:0;padding:5px 10px;font-size:12px" onclick="deletePromoCode('${esc(code)}')">حذف</button>
     </div>
   `).join("");
-  box.scrollTop = box.scrollHeight;
 }
 
-function renderAdminChatThreads(){
-  const area = document.getElementById("adminChatThreads");
-  if(!area || !isAdminUnlocked) return;
-
-  const threads = Object.entries(allChats)
-    .map(([key, data]) => ({ key, ...data }))
-    .sort((a, b) => (b.updatedAtTs || 0) - (a.updatedAtTs || 0));
-
-  if(threads.length === 0){
-    area.textContent = "لا توجد محادثات من العملاء حتى الآن";
-    return;
-  }
-
-  area.innerHTML = "";
-  threads.forEach(t => {
-    const item = document.createElement("div");
-    item.className = "thread-item";
-    item.innerHTML = `
-      <span class="badge chat-badge">${t.lastTopic || "محادثة"}</span>
-      <h3 style="margin:4px 0">${t.userName || "عميل"} <small style="display:inline;color:#9eb3cc">(${t.userContact || ""})</small></h3>
-      <p style="margin:6px 0;font-size:13.5px;color:#d6e4f5">آخر رسالة: ${t.lastMessage || ""}</p>
-    `;
-    const openBtn = document.createElement("button");
-    openBtn.className = "accept-btn";
-    openBtn.textContent = "فتح المحادثة";
-    openBtn.onclick = ()=>selectAdminChat(t.key);
-    item.append(openBtn);
-    area.append(item);
-  });
-}
-
-function selectAdminChat(chatKey){
-  selectedAdminChatKey = chatKey;
-  document.getElementById("adminActiveChatPanel").style.display = "block";
-  renderAdminActiveChat();
-}
-
-function renderAdminActiveChat(){
-  const panel = document.getElementById("adminActiveChatPanel");
-  const box = document.getElementById("adminChatMessages");
-  const titleEl = document.getElementById("adminChatTitle");
-  if(!panel || !box || !isAdminUnlocked) return;
-
-  if(!selectedAdminChatKey || !allChats[selectedAdminChatKey]){
-    panel.style.display = "none";
-    return;
-  }
-
-  panel.style.display = "block";
-  const thread = allChats[selectedAdminChatKey];
-  titleEl.textContent = `محادثة: ${thread.userName || "عميل"} (${thread.userContact || ""})`;
-
-  const msgs = Object.values(thread.messages || {}).sort((a, b) => (a.createdAtTs || 0) - (b.createdAtTs || 0));
-  if(msgs.length === 0){
-    box.innerHTML = `<small style="text-align:center;color:#9eb3cc">لا توجد رسائل في هذه المحادثة</small>`;
-    return;
-  }
-
-  box.innerHTML = msgs.map(m => `
-    <div class="msg-bubble ${m.sender === "admin" ? "msg-admin" : "msg-user"}">
-      <div>${m.text}</div>
-      <div class="msg-meta">${m.sender === "admin" ? "أنت (الإدارة)" : (m.senderName || "العميل")}${m.topic ? " • " + m.topic : ""} • ${m.createdAt || ""}</div>
-    </div>
-  `).join("");
-  box.scrollTop = box.scrollHeight;
-}
-
-window.sendAdminReply = async function(){
-  if(!isAdminUnlocked || !selectedAdminChatKey) return;
-  const inputEl = document.getElementById("adminChatInput");
-  const text = inputEl.value.trim();
-  if(!text) return;
-
-  const threadRef = ref(db, "chats/" + selectedAdminChatKey);
-  const msgRef = push(ref(db, "chats/" + selectedAdminChatKey + "/messages"));
-
-  await update(threadRef, {
-    lastMessage: "الإدارة: " + text,
+async function pushAutoChatMessage(chatKey, summaryText, contextLabel){
+  if(!chatKey || chatKey === "guest") return;
+  const chatMetaRef = ref(db, `chats/${chatKey}`);
+  await update(chatMetaRef, {
+    userName: currentUser?.name || "عميل",
+    userIdentifier: currentUser?.identifier || currentUser?.id || "",
+    lastContext: contextLabel || "إشعار تلقائي",
+    lastMessage: summaryText,
+    updatedAt: new Date().toLocaleString("ar-EG"),
     updatedAtTs: Date.now()
   });
 
+  const msgRef = push(ref(db, `chats/${chatKey}/messages`));
   await set(msgRef, {
     sender: "admin",
-    senderName: "الإدارة",
-    text,
-    createdAt: new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" }),
-    createdAtTs: Date.now()
+    senderName: "النظام / الإدارة",
+    context: contextLabel || "إشعار تلقائي",
+    text: summaryText,
+    time: new Date().toLocaleString("ar-EG"),
+    ts: Date.now()
   });
+}
 
-  inputEl.value = "";
-};
-
-/* إرسال طلب عرض حساب من قسم البيع (بانتظار موافقة الإدارة) */
-window.submitListingRequest = async function(){
-  const sellerInfo = document.getElementById("sellerName").value.trim();
-  const name = document.getElementById("sellAccName").value.trim();
-  const basePrice = Number(document.getElementById("sellBasePrice").value);
-  const description = document.getElementById("sellDescription").value.trim();
-  const file = document.getElementById("sellPhoto").files[0];
-  const btn = document.getElementById("submitListingBtn");
-
-  if(!sellerInfo || !name || !basePrice || basePrice < 1 || !description){
-    alert("اكتب بياناتك واسم الحساب والسعر المطلوب والتفاصيل");
+function updateHomeChatCounter(){
+  const badge = document.getElementById("homeChatCounter");
+  if(!badge || !currentUser){
+    if(badge) badge.textContent = "0";
     return;
   }
-  if(file && file.size > 500000){
-    alert("اختار صورة أقل من 500 كيلوبايت");
-    return;
-  }
+  const chatObj = allChats[getUserChatKey(currentUser)];
+  const count = Object.keys(chatObj?.messages || {}).length;
+  badge.textContent = String(count);
+}
 
-  const finalPrice = basePrice + AUTO_MARKUP;
-  btn.disabled = true;
-  btn.textContent = "جاري إرسال طلب الموافقة...";
+onValue(ref(db, ".info/connected"), (snap)=>{
+  setConnectionUI(Boolean(snap.val()));
+});
 
-  const finish = async (photo)=>{
-    try{
-      const reqRef = push(ref(db, "listing_requests"));
-      await set(reqRef, {
-        sellerInfo,
-        name,
-        basePrice,
-        finalPrice,
-        description,
-        photo,
-        status: "pending",
-        createdAt: new Date().toLocaleString("ar-EG"),
-        createdAtTs: Date.now()
-      });
-      document.getElementById("sellAccName").value = "";
-      document.getElementById("sellBasePrice").value = "";
-      document.getElementById("sellDescription").value = "";
-      document.getElementById("sellPhoto").value = "";
-      updateSellFeePreview();
-      alert("تم إرسال طلب عرض الحساب للإدارة، وسيُنشر في قسم الشراء بعد الموافقة");
-    } catch(err){
-      alert("تعذر إرسال الطلب أونلاين، حاول مرة أخرى");
-    } finally{
-      btn.disabled = false;
-      btn.textContent = "إرسال طلب موافقة العرض";
+onValue(ref(db, "users"), (snap)=>{
+  const val = snap.val() || {};
+  usersList = Object.entries(val).map(([key, u]) => ({ key, ...u }));
+  if(currentUser){
+    const matched = usersList.find(u =>
+      (currentUser.id && u.id === currentUser.id) ||
+      (currentUser.identifier && String(u.identifier || "").toLowerCase() === String(currentUser.identifier).toLowerCase())
+    );
+    if(matched){
+      currentUser = { ...currentUser, ...matched };
+      localStorage.setItem("zaemCurrentUser", JSON.stringify(currentUser));
     }
+  }
+  syncAuthUI();
+});
+
+onValue(ref(db, "products"), (snap)=>{
+  productsLoaded = true;
+  const val = snap.val() || {};
+  items = Object.entries(val)
+    .map(([key, p]) => ({ key, ...p }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  document.getElementById("onlineCount").textContent = "الحسابات: " + items.length;
+  renderProducts();
+  renderCompareBox();
+  renderFavoritesInProfile();
+  if(isAdminUnlocked) renderAdminStats();
+});
+
+onValue(ref(db, "listing_requests"), (snap)=>{
+  const val = snap.val() || {};
+  allListingRequests = Object.entries(val)
+    .map(([key, r]) => ({ key, ...r }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  pendingListingRequests = allListingRequests.filter(r => r.status !== "approved" && r.status !== "rejected");
+  renderMyListings();
+  renderNotificationsInProfile();
+  if(isAdminUnlocked) renderListingRequests();
+});
+
+onValue(ref(db, "orders"), (snap)=>{
+  const val = snap.val() || {};
+  orders = Object.entries(val)
+    .map(([key, o]) => ({ key, ...o }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  renderProducts();
+  renderMyOrdersInProfile();
+  renderNotificationsInProfile();
+  if(isAdminUnlocked){
+    renderOrders();
+    renderAdminStats();
+  }
+});
+
+onValue(ref(db, "complaints"), (snap)=>{
+  const val = snap.val() || {};
+  complaints = Object.entries(val)
+    .map(([key, c]) => ({ key, ...c }))
+    .sort((a, b) => (b.createdAtTs || 0) - (a.createdAtTs || 0));
+  if(isAdminUnlocked){
+    renderComplaints();
+    renderAdminStats();
+  }
+});
+
+onValue(ref(db, "reviews"), (snap)=>{
+  const val = snap.val() || {};
+  reviewsList = Object.entries(val)
+    .map(([key, r]) => ({ key, ...r }))
+    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  renderReviews();
+});
+
+onValue(ref(db, "promo_codes"), (snap)=>{
+  const val = snap.val() || {};
+  promoCodes = { ZAEM10: 10, ...val };
+  if(isAdminUnlocked) renderPromoCodesAdmin();
+});
+
+onValue(ref(db, "chats"), (snap)=>{
+  allChats = snap.val() || {};
+  updateHomeChatCounter();
+  renderUserChatMessages();
+  if(isAdminUnlocked){
+    renderAdminChatThreads();
+    renderAdminActiveChat();
+    renderAdminStats();
+  }
+});
+
+function renderMyListings(){
+  const countEl = document.getElementById("myListingsCount");
+  const container = document.getElementById("myListingsContainer");
+  if(!countEl || !container) return;
+
+  if(!currentUser){
+    countEl.textContent = "عدد حساباتك المعروضة: 0";
+    container.innerHTML = "";
+    return;
+  }
+
+  const mine = allListingRequests.filter(r =>
+    (currentUser.id && r.ownerId === currentUser.id) ||
+    (currentUser.identifier && String(r.ownerIdentifier || "").toLowerCase() === String(currentUser.identifier).toLowerCase())
+  );
+
+  countEl.textContent = `عدد حساباتك المعروضة: ${mine.length}`;
+
+  if(!mine.length){
+    container.innerHTML = "<p>لم تقم بعرض أي حسابات بعد.</p>";
+    return;
+  }
+
+  const statusMap = {
+    pending:  { label: "قيد المراجعة", cls: "pending" },
+    approved: { label: "مقبول",       cls: "accepted" },
+    rejected: { label: "مرفوض",       cls: "rejected" }
   };
 
-  if(file){
-    const reader = new FileReader();
-    reader.onload = ()=>finish(reader.result);
-    reader.readAsDataURL(file);
-  } else {
-    await finish("");
+  container.innerHTML = mine.map(r => {
+    const st = statusMap[r.status || "pending"] || statusMap.pending;
+    const isPending = (r.status || "pending") === "pending";
+    return `
+      <div class="my-listing-card">
+        <span class="badge ${st.cls}">${st.label}</span>
+        ${r.photo ? `<img src="${r.photo}" alt="${esc(r.name)}">` : ""}
+        ${r.photoExtra ? `<img class="extra-photo-img" src="${r.photoExtra}" alt="صورة إضافية">` : ""}
+        <div style="font-weight:bold;font-size:16px">${esc(r.name)}</div>
+        <div class="price">سعرك: ${esc(r.basePrice)} جنيه — المعروض: ${esc(r.finalPrice)} جنيه</div>
+        <p style="margin:6px 0;color:#cbd5e1">${esc(r.desc || "")}</p>
+        <small>تاريخ الطلب: ${esc(r.createdAt || "")}</small>
+        ${r.status === "rejected" && r.rejectionReason ? `
+          <div class="reject-reason-box">
+            <strong>سبب الرفض:</strong> ${esc(r.rejectionReason)}
+          </div>
+        ` : ""}
+        ${isPending ? `
+          <div style="margin-top:8px">
+            <button class="secondary-btn" onclick="editPendingListing('${r.key}')">تعديل السعر والتفاصيل</button>
+            <button class="delete" onclick="cancelPendingListing('${r.key}')">سحب الطلب</button>
+          </div>
+        ` : ""}
+        <button class="chat-btn" onclick="openPage('chat', 'المحادثة مع الإدارة')">فتح المحادثة مع الإدارة</button>
+      </div>
+    `;
+  }).join("");
+}
+
+window.editPendingListing = async function(reqKey){
+  const reqItem = allListingRequests.find(r => r.key === reqKey && (r.status || "pending") === "pending");
+  if(!reqItem) return;
+  const newBaseRaw = prompt("أدخل السعر المطلوب الجديد بالجنيه:", String(reqItem.basePrice || ""));
+  if(newBaseRaw === null) return;
+  const newBase = Number(newBaseRaw);
+  if(!newBase || newBase <= 0){
+    showToast("أدخل سعراً صحيحاً أكبر من صفر.");
+    return;
   }
+  const newDesc = prompt("عدّل تفاصيل الحساب:", reqItem.desc || "");
+  if(newDesc === null) return;
+
+  await update(ref(db, `listing_requests/${reqKey}`), {
+    basePrice: newBase,
+    finalPrice: newBase + AUTO_MARKUP,
+    desc: newDesc.trim() || reqItem.desc
+  });
+  showToast("تم تحديث بيانات العرض قيد المراجعة.");
 };
+
+window.cancelPendingListing = async function(reqKey){
+  if(!confirm("سحب وحذف هذا الطلب قيد المراجعة؟")) return;
+  await remove(ref(db, `listing_requests/${reqKey}`));
+  showToast("تم سحب الطلب.");
+};
+
+function normalizeSellerKey(raw){
+  if(!raw) return "";
+  return String(raw).trim().toLowerCase().replace(/[.#$/\[\]]/g, "_");
+}
+
+window.openSellerChat = async function(sourceType, itemKey){
+  let sellerName = "";
+  let rawContact = "";
+  let itemTitle = "";
+
+  if(sourceType === "request"){
+    const reqItem = allListingRequests.find(r => r.key === itemKey);
+    if(!reqItem) return;
+    sellerName = reqItem.sellerName || "صاحب الحساب";
+    rawContact = reqItem.ownerIdentifier || reqItem.ownerId || reqItem.sellerName || "";
+    itemTitle = reqItem.name || "";
+  } else {
+    const prod = items.find(p => p.key === itemKey);
+    if(!prod) return;
+    sellerName = prod.sellerName || "صاحب الحساب";
+    rawContact = prod.ownerIdentifier || prod.ownerId || prod.sellerName || "";
+    itemTitle = prod.name || "";
+  }
+
+  const chatKey = normalizeSellerKey(rawContact);
+  if(!chatKey){
+    showToast("هذا الحساب مضاف مباشرة من الإدارة ولا يوجد له بائع خارجي للمراسلة.");
+    return;
+  }
+
+  if(!allChats[chatKey]){
+    await update(ref(db, `chats/${chatKey}`), {
+      userName: sellerName,
+      userIdentifier: rawContact,
+      lastContext: "متابعة حساب",
+      lastMessage: itemTitle ? `بخصوص الحساب: ${itemTitle}` : "تواصل من الإدارة",
+      updatedAt: new Date().toLocaleString("ar-EG"),
+      updatedAtTs: Date.now()
+    });
+  }
+
+  switchAdminSection("chats");
+  selectAdminChat(chatKey);
+};
+
+function renderProducts(){
+  const buyDiv = document.getElementById("buyProducts");
+  const adminDiv = document.getElementById("adminProducts");
+  const favs = getUserFavorites();
+
+  // تحديث ملخص قسم الشراء العلوي
+  const availableItems = items.filter(p => !getAccountStatus(p).locked);
+  const countEl = document.getElementById("buyAvailableCount");
+  const lowestEl = document.getElementById("buyLowestPrice");
+  if(countEl) countEl.textContent = String(availableItems.length);
+  if(lowestEl){
+    if(availableItems.length){
+      const minVal = Math.min(...availableItems.map(p => Number(p.price || 0)).filter(n => n > 0));
+      lowestEl.textContent = Number.isFinite(minVal) ? `${minVal} جنيه` : "-";
+    } else {
+      lowestEl.textContent = "-";
+    }
+  }
+
+  if(!productsLoaded){
+    return;
+  }
+
+  const q = String(document.getElementById("buySearchInput")?.value || "").trim().toLowerCase();
+  const sortMode = document.getElementById("buySortSelect")?.value || "newest";
+
+  let filtered = items.filter(p => {
+    if(!q) return true;
+    const hay = `${p.name || ""} ${p.desc || ""}`.toLowerCase();
+    return hay.includes(q);
+  });
+
+  if(sortMode === "price_asc"){
+    filtered = [...filtered].sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+  } else if(sortMode === "price_desc"){
+    filtered = [...filtered].sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+  }
+
+  if(!filtered.length){
+    buyDiv.innerHTML = "<p>لا توجد حسابات مطابقة للبحث حالياً.</p>";
+  } else {
+    buyDiv.innerHTML = filtered.map(p => {
+      const isFav = favs.includes(p.key);
+      const st = getAccountStatus(p);
+      const isCompared = compareIds.includes(p.key);
+      const hasTwoPhotos = Boolean(p.photo && p.photoExtra);
+      return `
+        <div class="card-item">
+          <span class="badge ${st.cls}">${st.label}</span>
+          <span class="badge verified-badge">حساب موثق</span>
+          ${isNewAccount(p) ? `<span class="badge new-badge">جديد</span>` : ""}
+          ${p.photo ? `<img id="cardImg_${p.key}" src="${p.photo}" alt="${esc(p.name)}">` : ""}
+          ${hasTwoPhotos ? `
+            <div class="gallery-switcher">
+              <button type="button" id="galBtn1_${p.key}" class="gallery-tab-btn active" onclick="switchCardPhoto('${p.key}', 1)">صورة 1</button>
+              <button type="button" id="galBtn2_${p.key}" class="gallery-tab-btn" onclick="switchCardPhoto('${p.key}', 2)">صورة 2</button>
+            </div>
+          ` : (p.photoExtra ? `<img class="extra-photo-img" src="${p.photoExtra}" alt="صورة إضافية للحساب">` : "")}
+          <div style="font-size:17px;font-weight:bold">${esc(p.name)}</div>
+          <div class="price">${esc(p.price)} جنيه</div>
+          <div>${esc(p.desc || "")}</div>
+          ${!st.locked ? `<button class="order-btn" onclick="openOrderModal('${p.key}')">شراء الحساب</button>` : `<button class="order-btn" disabled>تم البيع</button>`}
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+            <button class="secondary-btn" style="margin:0" onclick="openQuickView('${p.key}')">عرض سريع</button>
+            <button class="secondary-btn" style="margin:0" onclick="toggleFavorite('${p.key}')">${isFav ? "★ المفضلة" : "☆ مفضلة"}</button>
+            <button class="secondary-btn" style="margin:0" onclick="toggleCompare('${p.key}')">${isCompared ? "✓ للمقارنة" : "مقارنة"}</button>
+            <button class="copy-btn" style="margin:0" onclick="shareProduct('${p.key}')">مشاركة</button>
+            <button class="delete" style="margin:0" onclick="reportProduct('${p.key}')">إبلاغ</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  if(!isAdminUnlocked){
+    adminDiv.innerHTML = "";
+    return;
+  }
+
+  if(!items.length){
+    adminDiv.innerHTML = "<p>لا توجد حسابات منشورة حالياً.</p>";
+  } else {
+    adminDiv.innerHTML = items.map(p => `
+      <div class="card-item">
+        ${p.photo ? `<img src="${p.photo}" alt="${esc(p.name)}">` : ""}
+        ${p.photoExtra ? `<img class="extra-photo-img" src="${p.photoExtra}" alt="صورة إضافية">` : ""}
+        <div style="font-size:16px;font-weight:bold">${esc(p.name)}</div>
+        <div class="price">${esc(p.price)} جنيه</div>
+        <div>${esc(p.desc || "")}</div>
+        <small>المصدر: ${p.source === "user_approved" ? `موافقة على عرض (${esc(p.sellerName || "")})` : "إضافة الإدارة"}</small>
+        <div class="admin-actions-bar">
+          <div class="admin-primary-group">
+            <button class="chat-btn" style="width:auto;margin:0" onclick="openSellerChat('product', '${p.key}')">💬 مراسلة</button>
+          </div>
+          <div class="admin-danger-group">
+            <button class="delete" style="margin:0" onclick="deleteProduct('${p.key}')">حذف الحساب</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  }
+}
 
 function renderListingRequests(){
   const area = document.getElementById("listingRequestsArea");
   if(!area) return;
-  area.innerHTML = "";
-  if(!isAdminUnlocked) return;
 
-  if(listingRequests.length === 0){
-    area.textContent = "لا توجد طلبات عرض جديدة بانتظار الموافقة";
+  if(!pendingListingRequests.length){
+    area.innerHTML = "<p>لا توجد طلبات عرض حسابات بانتظار الموافقة حالياً.</p>";
     return;
   }
 
-  listingRequests.forEach(reqItem=>{
-    const card = document.createElement("div");
-    card.className = "listing-req-card";
-    card.innerHTML = `
+  area.innerHTML = pendingListingRequests.map(r => `
+    <div class="listing-req-card">
       <span class="badge pending">بانتظار الموافقة</span>
-      <h3 style="margin:4px 0">${reqItem.name}</h3>
-      <div class="price">السعر بعد إضافة +60: ${reqItem.finalPrice} جنيه <small style="display:inline;color:#ffd000">(سعر صاحب الحساب: ${reqItem.basePrice} جنيه)</small></div>
-      <p style="margin:6px 0;font-size:13.5px;color:#d6e4f5">العارض: ${reqItem.sellerInfo}</p>
-      <p style="margin:6px 0;font-size:13.5px;color:#c9d8eb">${reqItem.description}</p>
-      ${reqItem.photo ? `<img src="${reqItem.photo}" alt="صورة الحساب">` : ""}
-      <small>الوقت: ${reqItem.createdAt}</small>
-      <div style="margin-top:10px">
-        <button class="accept-btn" onclick="approveListingRequest('${reqItem.key}')">موافقة ونشر في الشراء</button>
-        <button class="reject-btn" onclick="rejectListingRequest('${reqItem.key}')">رفض الطلب</button>
+      ${r.photo ? `<img src="${r.photo}" alt="${esc(r.name)}">` : ""}
+      ${r.photoExtra ? `<img class="extra-photo-img" src="${r.photoExtra}" alt="صورة إضافية">` : ""}
+      <div style="font-size:16px;font-weight:bold">${esc(r.name)}</div>
+      <div>البائع: <strong>${esc(r.sellerName || "")}</strong></div>
+      <div>سعر البائع: <strong>${esc(r.basePrice)} جنيه</strong> | السعر بعد +60 تلقائي: <strong style="color:#22ff88">${esc(r.finalPrice)} جنيه</strong></div>
+      <p style="margin:8px 0">${esc(r.desc || "")}</p>
+      <small>تاريخ الطلب: ${esc(r.createdAt || "")}</small>
+
+      <label style="display:block;margin-top:8px">سبب الرفض (مطلوب في حال رفض العرض):</label>
+      <input id="rejectReason_${r.key}" placeholder="اكتب سبب رفض العرض هنا ليظهر للعميل...">
+
+      <div class="admin-actions-bar">
+        <div class="admin-primary-group">
+          <button class="accept-btn" style="margin:0" onclick="approveListingRequest('${r.key}')">موافقة ونشر (+60)</button>
+          <button class="chat-btn" style="width:auto;margin:0" onclick="openSellerChat('request', '${r.key}')">💬 مراسلة</button>
+        </div>
+        <div class="admin-danger-group">
+          <button class="reject-btn" style="margin:0" onclick="rejectListingRequest('${r.key}')">رفض العرض</button>
+        </div>
       </div>
-    `;
-    area.append(card);
-  });
+    </div>
+  `).join("");
 }
 
+window.submitListingRequest = async function(){
+  const btn = document.getElementById("submitListingBtn");
+  const sellerName = document.getElementById("sellerName").value.trim() || currentUser?.name || "";
+  const name = document.getElementById("sellAccName").value.trim();
+  const basePrice = Number(document.getElementById("sellBasePrice").value);
+  const desc = document.getElementById("sellDescription").value.trim();
+  const file = document.getElementById("sellPhoto").files[0];
+  const fileExtra = document.getElementById("sellPhotoExtra").files[0];
+
+  if(!sellerName || !name || !basePrice || basePrice <= 0 || !desc){
+    showToast("أدخل بياناتك واسم الحساب والسعر المطلوب والتفاصيل.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري إرسال طلب العرض...";
+
+  try{
+    const photo = await fileToCompressedDataURL(file, 500);
+    const photoExtra = await fileToCompressedDataURL(fileExtra, 500);
+    const finalPrice = basePrice + AUTO_MARKUP;
+    const chatKey = getUserChatKey(currentUser);
+
+    const newReqRef = push(ref(db, "listing_requests"));
+    await set(newReqRef, {
+      ownerId: currentUser?.id || "",
+      ownerIdentifier: currentUser?.identifier || "",
+      sellerName,
+      name,
+      basePrice,
+      finalPrice,
+      desc,
+      photo,
+      photoExtra,
+      status: "pending",
+      rejectionReason: "",
+      createdAt: new Date().toLocaleString("ar-EG"),
+      createdAtTs: Date.now()
+    });
+
+    await pushAutoChatMessage(
+      chatKey,
+      `تم استلام طلب عرض حساب جديد (${name}) بسعرك ${basePrice} جنيه (المعروض ${finalPrice} جنيه). يمكنك متابعة تفاصيل التسليم والتواصل هنا.`,
+      "عرض حساب للبيع"
+    );
+
+    document.getElementById("sellAccName").value = "";
+    document.getElementById("sellBasePrice").value = "";
+    document.getElementById("sellDescription").value = "";
+    document.getElementById("sellPhoto").value = "";
+    document.getElementById("sellPhotoExtra").value = "";
+    updateSellFeePreview();
+    renderMyListings();
+    showToast("تم إرسال طلب عرض الحساب للإدارة وفتح محادثة تلقائية معها.");
+  } catch(err){
+    showToast(err.message || "تعذر إرسال الطلب.");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "إرسال طلب موافقة العرض";
+  }
+};
+
 window.approveListingRequest = async function(reqKey){
-  if(!isAdminUnlocked) return;
-  const reqItem = listingRequests.find(r => r.key === reqKey);
+  const reqItem = pendingListingRequests.find(r => r.key === reqKey);
   if(!reqItem) return;
 
-  const finalPrice = Number(reqItem.finalPrice) || (Number(reqItem.basePrice || 0) + AUTO_MARKUP);
-  const newProdRef = push(ref(db, "products"));
-  await set(newProdRef, {
+  const prodRef = push(ref(db, "products"));
+  await set(prodRef, {
     name: reqItem.name,
-    price: finalPrice,
-    basePrice: Number(reqItem.basePrice || 0),
-    sellerInfo: reqItem.sellerInfo || "",
-    description: reqItem.description,
+    price: reqItem.finalPrice,
+    basePrice: reqItem.basePrice,
+    desc: reqItem.desc,
     photo: reqItem.photo || "",
+    photoExtra: reqItem.photoExtra || "",
+    source: "user_approved",
+    sellerName: reqItem.sellerName,
+    ownerId: reqItem.ownerId || "",
+    ownerIdentifier: reqItem.ownerIdentifier || "",
+    createdAt: new Date().toLocaleString("ar-EG"),
     createdAtTs: Date.now()
   });
-  await remove(ref(db, "listing_requests/" + reqKey));
-  alert("تمت الموافقة ونشر الحساب فوراً في قسم الشراء بسعر " + finalPrice + " جنيه");
+
+  await update(ref(db, `listing_requests/${reqKey}`), {
+    status: "approved",
+    rejectionReason: "",
+    reviewedAt: new Date().toLocaleString("ar-EG")
+  });
+
+  const chatKey = String(reqItem.ownerIdentifier || reqItem.ownerId || reqItem.sellerName || "").toLowerCase().replace(/[.#$/\[\]]/g, "_");
+  if(chatKey){
+    await pushAutoChatMessage(
+      chatKey,
+      `تم قبول عرض الحساب (${reqItem.name}) ونشره في المتجر بسعر ${reqItem.finalPrice} جنيه.`,
+      "عرض حساب للبيع"
+    );
+  }
+
+  showToast("تمت الموافقة ونشر الحساب في قسم الشراء.");
 };
 
 window.rejectListingRequest = async function(reqKey){
-  if(!isAdminUnlocked) return;
-  if(confirm("هل تريد رفض وحذف طلب عرض الحساب؟")){
-    await remove(ref(db, "listing_requests/" + reqKey));
+  const reqItem = pendingListingRequests.find(r => r.key === reqKey);
+  if(!reqItem) return;
+
+  const reasonInput = document.getElementById(`rejectReason_${reqKey}`);
+  const reason = (reasonInput ? reasonInput.value : "").trim();
+
+  if(!reason){
+    showToast("يرجى كتابة سبب الرفض أولاً قبل رفض العرض.");
+    if(reasonInput) reasonInput.focus();
+    return;
   }
+
+  await update(ref(db, `listing_requests/${reqKey}`), {
+    status: "rejected",
+    rejectionReason: reason,
+    reviewedAt: new Date().toLocaleString("ar-EG")
+  });
+
+  const chatKey = String(reqItem.ownerIdentifier || reqItem.ownerId || reqItem.sellerName || "").toLowerCase().replace(/[.#$/\[\]]/g, "_");
+  if(chatKey){
+    await pushAutoChatMessage(
+      chatKey,
+      `تم رفض عرض الحساب (${reqItem.name}).\nسبب الرفض: ${reason}`,
+      "عرض حساب للبيع"
+    );
+  }
+
+  showToast("تم رفض العرض وحفظ السبب للعميل.");
 };
 
 window.addProductFromAdmin = async function(){
-  if(!isAdminUnlocked) return;
+  const btn = document.getElementById("adminAddBtn");
   const name = document.getElementById("adminAccName").value.trim();
   const basePrice = Number(document.getElementById("adminBasePrice").value);
-  const description = document.getElementById("adminAccDesc").value.trim();
+  const desc = document.getElementById("adminAccDesc").value.trim();
   const file = document.getElementById("adminAccPhoto").files[0];
-  const btn = document.getElementById("adminAddBtn");
+  const fileExtra = document.getElementById("adminAccPhotoExtra").files[0];
 
-  if(!name || !basePrice || basePrice < 1 || !description){
-    alert("اكتب اسم الحساب والسعر الأساسي والتفاصيل");
-    return;
-  }
-  if(file && file.size > 500000){
-    alert("اختار صورة أقل من 500 كيلوبايت");
+  if(!name || !basePrice || basePrice <= 0){
+    showToast("أدخل اسم الحساب والسعر الأساسي.");
     return;
   }
 
-  const finalPrice = basePrice + AUTO_MARKUP;
   btn.disabled = true;
-  btn.textContent = "جاري النشر أونلاين...";
+  btn.textContent = "جاري النشر...";
 
-  const finish = async (photo)=>{
-    try{
-      const newProdRef = push(ref(db, "products"));
-      await set(newProdRef, {
-        name,
-        price: finalPrice,
-        basePrice,
-        description,
-        photo,
-        createdAtTs: Date.now()
-      });
-      document.getElementById("adminAccName").value = "";
-      document.getElementById("adminBasePrice").value = "";
-      document.getElementById("adminAccDesc").value = "";
-      document.getElementById("adminAccPhoto").value = "";
-      updateAdminFeePreview();
-      alert("تم نشر الحساب بسعر " + finalPrice + " جنيه");
-    } catch(err){
-      alert("حدث خطأ أثناء نشر الحساب أونلاين");
-    } finally{
-      btn.disabled = false;
-      btn.textContent = "نشر الحساب فوراً";
-    }
-  };
+  try{
+    const photo = await fileToCompressedDataURL(file, 500);
+    const photoExtra = await fileToCompressedDataURL(fileExtra, 500);
+    const finalPrice = basePrice + AUTO_MARKUP;
+    const prodRef = push(ref(db, "products"));
+    await set(prodRef, {
+      name,
+      price: finalPrice,
+      basePrice,
+      desc,
+      photo,
+      photoExtra,
+      source: "admin_direct",
+      createdAt: new Date().toLocaleString("ar-EG"),
+      createdAtTs: Date.now()
+    });
 
-  if(file){
-    const reader = new FileReader();
-    reader.onload = ()=>finish(reader.result);
-    reader.readAsDataURL(file);
-  } else {
-    await finish("");
+    document.getElementById("adminAccName").value = "";
+    document.getElementById("adminBasePrice").value = "";
+    document.getElementById("adminAccDesc").value = "";
+    document.getElementById("adminAccPhoto").value = "";
+    document.getElementById("adminAccPhotoExtra").value = "";
+    updateAdminFeePreview();
+    showToast("تم نشر الحساب بعد إضافة 60 جنيه تلقائياً.");
+  } catch(err){
+    showToast(err.message || "تعذر نشر الحساب.");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "نشر الحساب فوراً";
   }
 };
 
-function renderProducts(){
-  const buyArea = document.getElementById("buyProducts");
-  const adminArea = document.getElementById("adminProducts");
-  if(!buyArea) return;
-  buyArea.innerHTML = "";
-  if(adminArea) adminArea.innerHTML = "";
+window.deleteProduct = async function(key){
+  if(!confirm("حذف هذا الحساب نهائياً؟")) return;
+  await remove(ref(db, `products/${key}`));
+  showToast("تم حذف الحساب.");
+};
 
-  if(items.length === 0){
-    buyArea.textContent = "لا توجد حسابات معروضة حالياً";
-    if(adminArea && isAdminUnlocked) adminArea.textContent = "لا توجد حسابات منشورة حالياً";
+window.openOrderModal = function(key){
+  const p = items.find(x => x.key === key);
+  if(!p) return;
+  const st = getAccountStatus(p);
+  if(st.locked){
+    showToast("هذا الحساب تم بيعه بالفعل.");
     return;
   }
-
-  items.forEach((item)=>{
-    const postedLabel = formatTimeAgo(item.createdAtTs);
-
-    const buyCard = document.createElement("div");
-    buyCard.className = "card-item";
-    buyCard.innerHTML = `
-      ${item.photo ? `<img src="${item.photo}" alt="صورة الحساب">` : ""}
-      <h3 style="margin:0 0 4px 0">${item.name}</h3>
-      <small style="color:#4fd19b">${postedLabel}</small>
-      <div class="price">${item.price} جنيه</div>
-      <p style="margin:0;color:#c9d8eb;font-size:14px">${item.description}</p>
-    `;
-    const buyBtn = document.createElement("button");
-    buyBtn.className = "order-btn";
-    buyBtn.textContent = "طلب شراء";
-    buyBtn.onclick = ()=>openOrderModal(item.key);
-    buyCard.append(buyBtn);
-    buyArea.append(buyCard);
-
-    if(adminArea && isAdminUnlocked){
-      const adminCard = document.createElement("div");
-      adminCard.className = "card-item";
-      adminCard.innerHTML = `
-        ${item.photo ? `<img src="${item.photo}" alt="صورة الحساب">` : ""}
-        <h3 style="margin:0 0 4px 0">${item.name}</h3>
-        <small style="color:#4fd19b">${postedLabel}</small>
-        <div class="price">${item.price} جنيه</div>
-        ${item.sellerInfo ? `<small>العارض: ${item.sellerInfo} (السعر الأساسي: ${item.basePrice || "-"} جنيه)</small>` : ""}
-        <p style="margin:6px 0 0 0;color:#c9d8eb;font-size:14px">${item.description}</p>
-      `;
-      const delBtn = document.createElement("button");
-      delBtn.className = "delete";
-      delBtn.textContent = "حذف الحساب";
-      delBtn.onclick = ()=>removeProduct(item.key);
-      adminCard.append(delBtn);
-      adminArea.append(adminCard);
-    }
-  });
-}
-
-window.removeProduct = async function(productKey){
-  if(!isAdminUnlocked) return;
-  if(confirm("هل تريد حذف الحساب؟")){
-    await remove(ref(db, "products/" + productKey));
+  activeProductId = key;
+  document.getElementById("selectedProductInfo").textContent = `${p.name} — ${p.price} جنيه`;
+  if(currentUser && !document.getElementById("buyerName").value){
+    document.getElementById("buyerName").value = currentUser.name;
   }
-};
-
-window.openOrderModal = function(productKey){
-  activeProductId = productKey;
-  const item = items.find(x => x.key === productKey);
-  if(!item) return;
-  document.getElementById("selectedProductInfo").textContent =
-    item.name + " — " + item.price + " جنيه";
-  document.getElementById("buyerName").value = currentUser ? currentUser.name : "";
-  document.getElementById("buyerContact").value = currentUser ? currentUser.identifier : "";
-  document.getElementById("proofFile").value = "";
+  if(currentUser && !document.getElementById("buyerContact").value){
+    document.getElementById("buyerContact").value = currentUser.identifier || "";
+  }
+  document.getElementById("buyerLast4").value = "";
+  document.getElementById("buyerPromoCode").value = "";
+  document.getElementById("productPromoPreviewBox").innerHTML = "";
   document.getElementById("orderModal").style.display = "flex";
 };
 
 window.closeOrderModal = function(){
-  activeProductId = null;
   document.getElementById("orderModal").style.display = "none";
+  activeProductId = null;
 };
 
 window.submitProductOrder = async function(){
-  const product = items.find(x => x.key === activeProductId);
-  if(!product) return;
+  const btn = document.getElementById("productOrderSubmitBtn");
+  const p = items.find(x => x.key === activeProductId);
+  if(!p) return;
 
   const buyerName = document.getElementById("buyerName").value.trim();
   const buyerContact = document.getElementById("buyerContact").value.trim();
-  const proofFile = document.getElementById("proofFile").files[0];
-  const btn = document.getElementById("productOrderSubmitBtn");
+  const last4 = document.getElementById("buyerLast4").value.trim();
+  const promoRaw = document.getElementById("buyerPromoCode").value.trim();
+  const file = document.getElementById("proofFile").files[0];
 
-  if(!buyerName || !buyerContact || !proofFile){
-    alert("اكمل البيانات وارفع صورة إثبات التحويل");
-    return;
-  }
-  if(proofFile.size > 500000){
-    alert("صورة الإثبات أكبر من 500 كيلوبايت");
+  if(!buyerName || !buyerContact){
+    showToast("أدخل اسمك ووسيلة التواصل.");
     return;
   }
 
   btn.disabled = true;
   btn.textContent = "جاري الإرسال...";
 
-  const reader = new FileReader();
-  reader.onload = async ()=>{
-    try{
-      const orderRef = push(ref(db, "orders"));
-      await set(orderRef, {
-        type: "شراء حساب",
-        productName: product.name,
-        priceText: product.price + " جنيه",
-        buyerName,
-        buyerContact,
-        userId: currentUser ? currentUser.id : null,
-        proof: reader.result,
-        status: "pending",
-        createdAt: new Date().toLocaleString("ar-EG"),
-        createdAtTs: Date.now()
-      });
-      closeOrderModal();
-      alert("تم إرسال الطلب أونلاين، ويمكنك متابعة تفاصيل الحساب في قسم المحادثة مع الإدارة");
-    } catch(err){
-      alert("تعذر إرسال الطلب، حاول مرة أخرى");
-    } finally{
-      btn.disabled = false;
-      btn.textContent = "إرسال الطلب";
-    }
-  };
-  reader.readAsDataURL(proofFile);
+  try{
+    const proof = await fileToCompressedDataURL(file, 500);
+    const priceCalc = applyPromoDiscount(`${p.price} جنيه`, promoRaw);
+    const orderRef = push(ref(db, "orders"));
+    await set(orderRef, {
+      ownerId: currentUser?.id || "",
+      ownerIdentifier: currentUser?.identifier || buyerContact,
+      productId: p.key,
+      type: "حساب",
+      itemName: p.name,
+      price: priceCalc.finalText,
+      last4,
+      promoCode: priceCalc.promoCode,
+      buyerName,
+      buyerContact,
+      proof,
+      status: "pending",
+      createdAt: new Date().toLocaleString("ar-EG"),
+      createdAtTs: Date.now()
+    });
+
+    await pushAutoChatMessage(
+      getUserChatKey(currentUser),
+      `تم إرسال طلب شراء حساب (${p.name}) بقيمة ${priceCalc.finalText}${last4 ? ` | آخر 4 أرقام: ${last4}` : ""}. تواصل هنا لتأكيد الاستلام والبيانات.`,
+      "شراء حساب"
+    );
+
+    document.getElementById("proofFile").value = "";
+    closeOrderModal();
+    showToast("تم إرسال طلب الشراء وفتح محادثة تلقائية مع الإدارة.");
+  } catch(err){
+    showToast(err.message || "تعذر إرسال الطلب.");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "إرسال الطلب";
+  }
 };
 
 window.submitCoinOrder = async function(){
-  const selectEl = document.getElementById("coinPackage");
-  const pkg = selectEl.value;
-  const priceText = selectEl.selectedOptions[0]?.dataset?.price || "يُراجع مع الإدارة";
+  const btn = document.getElementById("coinSubmitBtn");
+  const select = document.getElementById("coinPackage");
+  const pkg = select.value;
+  const rawPrice = select.options[select.selectedIndex]?.getAttribute("data-price") || "";
   const accountId = document.getElementById("coinAccountId").value.trim();
   const buyerName = document.getElementById("coinBuyerName").value.trim();
-  const proofFile = document.getElementById("coinProofFile").files[0];
-  const btn = document.getElementById("coinSubmitBtn");
+  const last4 = document.getElementById("coinLast4").value.trim();
+  const promoRaw = document.getElementById("coinPromoCode").value.trim();
+  const file = document.getElementById("coinProofFile").files[0];
 
-  if(!buyerName || !accountId || !proofFile){
-    alert("اكمل البيانات وارفع صورة إثبات التحويل");
-    return;
-  }
-  if(proofFile.size > 500000){
-    alert("صورة الإثبات أكبر من 500 كيلوبايت");
+  if(!accountId || !buyerName){
+    showToast("أدخل معرّف الحساب أو وسيلة التواصل واسمك.");
     return;
   }
 
   btn.disabled = true;
-  btn.textContent = "جاري الإرسال...";
+  btn.textContent = "جاري إرسال طلب الشحن...";
 
-  const reader = new FileReader();
-  reader.onload = async ()=>{
-    try{
-      const orderRef = push(ref(db, "orders"));
-      await set(orderRef, {
-        type: "شحن كوينز وعروض",
-        productName: pkg,
-        priceText,
-        buyerName,
-        buyerContact: accountId,
-        userId: currentUser ? currentUser.id : null,
-        proof: reader.result,
-        status: "pending",
-        createdAt: new Date().toLocaleString("ar-EG"),
-        createdAtTs: Date.now()
-      });
-      document.getElementById("coinProofFile").value = "";
-      alert("تم إرسال طلب الشحن أونلاين، ادخل قسم المحادثة مع الإدارة لإرسال بيانات الحساب أو الكود");
-    } catch(err){
-      alert("تعذر إرسال الطلب، حاول مرة أخرى");
-    } finally{
-      btn.disabled = false;
-      btn.textContent = "إرسال طلب الشحن";
-    }
-  };
-  reader.readAsDataURL(proofFile);
-};
+  try{
+    const proof = await fileToCompressedDataURL(file, 500);
+    const priceCalc = applyPromoDiscount(rawPrice, promoRaw);
+    const orderRef = push(ref(db, "orders"));
+    await set(orderRef, {
+      ownerId: currentUser?.id || "",
+      ownerIdentifier: currentUser?.identifier || accountId,
+      type: "شحن كوينز / عرض",
+      itemName: pkg,
+      price: priceCalc.finalText,
+      accountId,
+      last4,
+      promoCode: priceCalc.promoCode,
+      buyerName,
+      proof,
+      status: "pending",
+      createdAt: new Date().toLocaleString("ar-EG"),
+      createdAtTs: Date.now()
+    });
 
-window.updateOrderStatus = async function(orderKey, status){
-  if(!isAdminUnlocked) return;
-  await update(ref(db, "orders/" + orderKey), { status });
-};
+    await pushAutoChatMessage(
+      getUserChatKey(currentUser),
+      `تم استلام طلب شحن جديد (${pkg} — ${priceCalc.finalText}) لحساب (${accountId})${last4 ? ` | آخر 4 أرقام: ${last4}` : ""}. يمكنك إرسال أي تفاصيل أو أكواد إضافية هنا مباشرة.`,
+      "شحن كوينز / عروض"
+    );
 
-window.deleteOrder = async function(orderKey){
-  if(!isAdminUnlocked) return;
-  if(confirm("حذف الطلب؟")){
-    await remove(ref(db, "orders/" + orderKey));
+    document.getElementById("coinAccountId").value = "";
+    document.getElementById("coinLast4").value = "";
+    document.getElementById("coinPromoCode").value = "";
+    document.getElementById("coinProofFile").value = "";
+    document.getElementById("coinPromoPreviewBox").innerHTML = "";
+    showToast("تم إرسال طلب الشحن وفتح محادثة تلقائية مع الإدارة.");
+  } catch(err){
+    showToast(err.message || "تعذر إرسال طلب الشحن.");
+  } finally{
+    btn.disabled = false;
+    btn.textContent = "إرسال طلب الشحن";
   }
+};
+
+function resolveOrderChatKey(order){
+  const raw = order?.ownerIdentifier || order?.buyerContact || order?.ownerId || order?.buyerName || "";
+  return String(raw).trim().toLowerCase().replace(/[.#$/\[\]]/g, "_");
+}
+
+window.approveAndOpenChat = async function(orderKey){
+  const order = orders.find(o => o.key === orderKey);
+  if(!order) return;
+
+  await update(ref(db, `orders/${orderKey}`), { status: "accepted" });
+
+  const chatKey = resolveOrderChatKey(order);
+  if(!chatKey) return;
+
+  const nowStr = new Date().toLocaleString("ar-EG");
+  const nowTs = Date.now();
+  const note = `تمت الموافقة على طلبك (${order.itemName || ""} — ${order.price || ""}). تواصل هنا لاستكمال التسليم.`;
+
+  await update(ref(db, `chats/${chatKey}`), {
+    userName: order.buyerName || "عميل",
+    userIdentifier: order.ownerIdentifier || order.buyerContact || order.ownerId || chatKey,
+    lastContext: order.type || "طلب مقبول",
+    lastMessage: note,
+    updatedAt: nowStr,
+    updatedAtTs: nowTs
+  });
+
+  await set(push(ref(db, `chats/${chatKey}/messages`)), {
+    sender: "admin",
+    senderName: "الإدارة",
+    context: "تأكيد قبول الطلب",
+    text: note,
+    time: nowStr,
+    ts: nowTs
+  });
+
+  switchAdminSection("chats");
+  selectAdminChat(chatKey);
 };
 
 function renderOrders(){
-  const area = document.getElementById("orders");
-  if(!area) return;
-  area.innerHTML = "";
-  if(!isAdminUnlocked) return;
-  if(orders.length === 0){
-    area.textContent = "لا توجد طلبات حتى الآن";
+  const div = document.getElementById("orders");
+  if(!orders.length){
+    div.innerHTML = "<p>لا توجد طلبات واردة بعد.</p>";
     return;
   }
 
-  orders.forEach(order=>{
-    const card = document.createElement("div");
-    card.className = "order-card";
+  const stMap = {
+    pending: { label: "قيد المراجعة", cls: "pending" },
+    accepted: { label: "مقبول", cls: "accepted" },
+    rejected: { label: "مرفوض", cls: "rejected" }
+  };
 
-    const stText =
-      order.status === "accepted" ? "مقبول" :
-      order.status === "rejected" ? "مرفوض" : "قيد المراجعة";
-    const stClass =
-      order.status === "accepted" ? "accepted" :
-      order.status === "rejected" ? "rejected" : "pending";
-
-    card.innerHTML = `
-      <span class="badge ${stClass}">${stText}</span>
-      <h3 style="margin:4px 0">[${order.type}] ${order.productName} (${order.priceText})</h3>
-      <p style="margin:6px 0;font-size:14px">العميل: ${order.buyerName} | التواصل: ${order.buyerContact}</p>
-      <small>الوقت: ${order.createdAt}</small>
-      <img src="${order.proof}" class="proof-img" alt="إثبات التحويل">
-      <div style="margin-top:10px">
-        <button class="accept-btn" onclick="updateOrderStatus('${order.key}', 'accepted')">قبول الطلب</button>
-        <button class="reject-btn" onclick="updateOrderStatus('${order.key}', 'rejected')">رفض الطلب</button>
-        <button class="delete" onclick="deleteOrder('${order.key}')">حذف</button>
+  div.innerHTML = orders.map(o => {
+    const st = stMap[o.status || "pending"] || stMap.pending;
+    const isNew = (o.status || "pending") === "pending";
+    return `
+      <div class="order-card">
+        <span class="badge ${st.cls}">${isNew ? `<span class="pulse-dot"></span>` : ""}${st.label}</span>
+        ${buildOrderStepper(o.status)}
+        <div><strong>النوع:</strong> ${esc(o.type || "")}</div>
+        <div><strong>الطلب:</strong> ${esc(o.itemName || "")} (${esc(o.price || "")})</div>
+        <div><strong>العميل:</strong> ${esc(o.buyerName || "")}</div>
+        ${o.buyerContact ? `<div><strong>التواصل:</strong> ${esc(o.buyerContact)}</div>` : ""}
+        ${o.accountId ? `<div><strong>معرّف الحساب:</strong> ${esc(o.accountId)}</div>` : ""}
+        ${o.last4 ? `<div><strong>آخر 4 أرقام:</strong> ${esc(o.last4)}</div>` : ""}
+        <small>الوقت: ${esc(o.createdAt || "")}</small>
+        ${o.proof ? `<img class="proof-img" src="${o.proof}" alt="إثبات التحويل">` : "<div><small>لم تُرفق صورة إثبات.</small></div>"}
+        <div class="admin-actions-bar">
+          <div class="admin-primary-group">
+            <button class="accept-btn" style="margin:0" onclick="setOrderStatus('${o.key}','accepted')">قبول</button>
+            <button class="chat-btn" style="width:auto;margin:0" onclick="approveAndOpenChat('${o.key}')">💬 موافقة ومراسلة</button>
+          </div>
+          <div class="admin-danger-group">
+            <button class="reject-btn" style="margin:0" onclick="setOrderStatus('${o.key}','rejected')">رفض</button>
+            <button class="delete" style="margin:0" onclick="deleteOrder('${o.key}')">حذف</button>
+          </div>
+        </div>
       </div>
     `;
-    area.append(card);
+  }).join("");
+}
+
+window.setOrderStatus = async function(key, status){
+  await update(ref(db, `orders/${key}`), { status });
+  showToast(status === "accepted" ? "تم قبول الطلب." : "تم رفض الطلب.");
+};
+
+window.deleteOrder = async function(key){
+  if(!confirm("حذف هذا الطلب؟")) return;
+  await remove(ref(db, `orders/${key}`));
+  showToast("تم حذف الطلب.");
+};
+
+window.submitReview = async function(){
+  const author = document.getElementById("reviewAuthor").value.trim() || currentUser?.name || "عميل";
+  const rating = Number(document.getElementById("reviewRating").value) || 5;
+  const comment = document.getElementById("reviewComment").value.trim();
+  if(!comment){
+    showToast("اكتب رأيك أو تعليقك أولاً.");
+    return;
+  }
+  const revRef = push(ref(db, "reviews"));
+  await set(revRef, {
+    author,
+    rating,
+    comment,
+    time: new Date().toLocaleString("ar-EG"),
+    ts: Date.now()
   });
+  document.getElementById("reviewComment").value = "";
+  showToast("شكراً لتقييمك!");
+};
+
+function renderReviews(){
+  const box = document.getElementById("reviewsListContainer");
+  if(!box) return;
+  if(!reviewsList.length){
+    box.innerHTML = "<small style='margin-top:10px'>لا توجد تقييمات بعد.</small>";
+    return;
+  }
+  box.innerHTML = reviewsList.map(r => {
+    const stars = "★".repeat(Number(r.rating || 5)) + "☆".repeat(Math.max(0, 5 - Number(r.rating || 5)));
+    return `
+      <div class="review-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>${esc(r.author)}</strong>
+          <span style="color:#ffd000">${stars}</span>
+        </div>
+        <p style="margin:6px 0">${esc(r.comment)}</p>
+        <small>${esc(r.time || "")}</small>
+      </div>
+    `;
+  }).join("");
 }
 
 window.submitComplaint = async function(){
+  const btn = document.getElementById("compSubmitBtn");
   const name = document.getElementById("compName").value.trim();
   const contact = document.getElementById("compContact").value.trim();
   const subject = document.getElementById("compSubject").value.trim();
   const details = document.getElementById("compDetails").value.trim();
-  const btn = document.getElementById("compSubmitBtn");
 
   if(!name || !contact || !subject || !details){
-    alert("اكمل جميع بيانات الشكوى");
+    showToast("أكمل جميع حقول الشكوى.");
     return;
   }
 
@@ -1641,68 +3032,297 @@ window.submitComplaint = async function(){
       contact,
       subject,
       details,
-      userId: currentUser ? currentUser.id : null,
       status: "open",
       createdAt: new Date().toLocaleString("ar-EG"),
       createdAtTs: Date.now()
     });
+
     document.getElementById("compSubject").value = "";
     document.getElementById("compDetails").value = "";
-    alert("تم إرسال شكواك للإدارة بنجاح");
-  } catch(err){
-    alert("تعذر إرسال الشكوى، حاول مرة أخرى");
+    showToast("تم إرسال شكواك بنجاح إلى الإدارة.");
   } finally{
     btn.disabled = false;
     btn.textContent = "إرسال الشكوى";
   }
 };
 
-window.resolveComplaint = async function(compKey){
-  if(!isAdminUnlocked) return;
-  await update(ref(db, "complaints/" + compKey), { status: "resolved" });
-};
-
-window.deleteComplaint = async function(compKey){
-  if(!isAdminUnlocked) return;
-  if(confirm("حذف الشكوى؟")){
-    await remove(ref(db, "complaints/" + compKey));
-  }
-};
-
 function renderComplaints(){
-  const area = document.getElementById("adminComplaints");
-  if(!area) return;
-  area.innerHTML = "";
-  if(!isAdminUnlocked) return;
-  if(complaints.length === 0){
-    area.textContent = "لا توجد شكاوى حالياً";
+  const div = document.getElementById("adminComplaints");
+  if(!complaints.length){
+    div.innerHTML = "<p>لا توجد شكاوى أو بلاغات واردة حالياً.</p>";
     return;
   }
 
-  complaints.forEach(c=>{
-    const card = document.createElement("div");
-    card.className = "complaint-card";
+  div.innerHTML = complaints.map(c => {
     const isResolved = c.status === "resolved";
-    card.innerHTML = `
-      <span class="badge ${isResolved ? "resolved-badge" : "open-badge"}">${isResolved ? "تمت المعالجة" : "جديدة"}</span>
-      <h3 style="margin:4px 0">${c.subject}</h3>
-      <p style="margin:6px 0;font-size:14px">المرسل: ${c.name} | التواصل: ${c.contact}</p>
-      <p style="margin:6px 0;color:#d6e4f5;font-size:14px">${c.details}</p>
-      <small>الوقت: ${c.createdAt}</small>
-      <div style="margin-top:10px">
-        <button class="accept-btn" onclick="resolveComplaint('${c.key}')">تمت المعالجة</button>
-        <button class="delete" onclick="deleteComplaint('${c.key}')">حذف</button>
+    return `
+      <div class="complaint-card">
+        <span class="badge ${isResolved ? "resolved-badge" : "open-badge"}">${isResolved ? "تم الحل" : "قيد المتابعة"}</span>
+        <div style="font-size:16px;font-weight:bold">${esc(c.subject)}</div>
+        <div><strong>المرسل:</strong> ${esc(c.name)} — <strong>التواصل:</strong> ${esc(c.contact)}</div>
+        <p style="margin:8px 0">${esc(c.details)}</p>
+        <small>الوقت: ${esc(c.createdAt || "")}</small>
+        <div class="admin-actions-bar">
+          <div class="admin-primary-group">
+            <button class="accept-btn" style="margin:0" onclick="toggleComplaintStatus('${c.key}','${isResolved ? "open" : "resolved"}')">
+              ${isResolved ? "إعادة فتح" : "تحديد كمحلولة"}
+            </button>
+          </div>
+          <div class="admin-danger-group">
+            <button class="delete" style="margin:0" onclick="deleteComplaint('${c.key}')">حذف</button>
+          </div>
+        </div>
       </div>
     `;
-    area.append(card);
-  });
+  }).join("");
 }
 
-if(currentUser){
-  enterApp();
-} else {
-  document.getElementById("headerSubtitle").textContent = "سجّل الدخول للمتابعة";
+window.toggleComplaintStatus = async function(key, status){
+  await update(ref(db, `complaints/${key}`), { status });
+  showToast("تم تحديث حالة الشكوى.");
+};
+
+window.deleteComplaint = async function(key){
+  if(!confirm("حذف هذا البلاغ؟")) return;
+  await remove(ref(db, `complaints/${key}`));
+  showToast("تم حذف البلاغ.");
+};
+
+window.applyQuickReply = function(txt){
+  const input = document.getElementById("userChatInput");
+  if(input){
+    input.value = txt;
+    input.focus();
+  }
+};
+
+window.sendUserMessage = async function(){
+  if(!currentUser) return;
+  const input = document.getElementById("userChatInput");
+  const context = document.getElementById("userChatContext").value;
+  const text = input.value.trim();
+  if(!text) return;
+
+  const chatKey = getUserChatKey(currentUser);
+  const nowStr = new Date().toLocaleString("ar-EG");
+  const nowTs = Date.now();
+
+  await update(ref(db, `chats/${chatKey}`), {
+    userName: currentUser.name,
+    userIdentifier: currentUser.identifier || currentUser.id,
+    lastContext: context,
+    lastMessage: text,
+    updatedAt: nowStr,
+    updatedAtTs: nowTs
+  });
+
+  const msgRef = push(ref(db, `chats/${chatKey}/messages`));
+  await set(msgRef, {
+    sender: "user",
+    senderName: currentUser.name,
+    context,
+    text,
+    time: nowStr,
+    ts: nowTs
+  });
+
+  input.value = "";
+};
+
+function formatMessageBubble(m){
+  const isAdminMsg = m.sender === "admin";
+  if(m.isDelivery && m.secretValue){
+    const encoded = encodeURIComponent(m.secretValue);
+    return `
+      <div class="msg-bubble ${isAdminMsg ? "msg-admin" : "msg-user"}">
+        <div style="font-weight:bold;color:#ffd000">${esc(m.deliveryTitle || "بيانات التسليم")}</div>
+        <div class="delivery-card">
+          <div>${esc(m.secretValue)}</div>
+          <button class="copy-btn" style="padding:6px 10px;font-size:12px" onclick="copySecretText(decodeURIComponent('${encoded}'))">نسخ البيانات</button>
+        </div>
+        <div class="msg-meta">${esc(m.senderName || "الإدارة")} • ${esc(m.time || "")}</div>
+      </div>
+    `;
+  }
+  return `
+    <div class="msg-bubble ${isAdminMsg ? "msg-admin" : "msg-user"}">
+      <div>${esc(m.text)}</div>
+      <div class="msg-meta">${esc(m.senderName || (isAdminMsg ? "الإدارة" : "أنت"))} • ${esc(m.context || "")} • ${esc(m.time || "")}</div>
+    </div>
+  `;
 }
+
+function renderUserChatMessages(){
+  const box = document.getElementById("userChatMessages");
+  if(!box || !currentUser) return;
+
+  const chatKey = getUserChatKey(currentUser);
+  const chatObj = allChats[chatKey];
+  const msgsObj = chatObj?.messages || {};
+  const msgs = Object.values(msgsObj).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+
+  if(!msgs.length){
+    box.innerHTML = "<small>لا توجد رسائل بعد. ابدأ بكتابة رسالتك أو بيانات الحساب والكود هنا.</small>";
+    return;
+  }
+
+  box.innerHTML = msgs.map(formatMessageBubble).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function renderAdminChatThreads(){
+  const div = document.getElementById("adminChatThreads");
+  if(!div) return;
+
+  const entries = Object.entries(allChats || {})
+    .sort((a, b) => (b[1]?.updatedAtTs || 0) - (a[1]?.updatedAtTs || 0));
+
+  if(!entries.length){
+    div.innerHTML = "<p>لا توجد محادثات من العملاء حتى الآن.</p>";
+    return;
+  }
+
+  div.innerHTML = entries.map(([chatKey, c]) => {
+    const msgsArr = Object.values(c.messages || {}).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    const hasUnreadFromUser = msgsArr[0]?.sender === "user";
+    return `
+      <div class="thread-item">
+        <span class="badge chat-badge">${hasUnreadFromUser ? `<span class="pulse-dot"></span>` : ""}${esc(c.lastContext || "محادثة")}</span>
+        <div style="font-weight:bold;font-size:15px">${esc(c.userName || chatKey)}</div>
+        <small>${esc(c.userIdentifier || "")}</small>
+        <div style="margin:6px 0;color:#dbeafe">${esc(c.lastMessage || "")}</div>
+        <small>آخر تحديث: ${esc(c.updatedAt || "")}</small>
+        <button class="chat-btn" onclick="selectAdminChat('${chatKey}')">فتح المحادثة والرد</button>
+      </div>
+    `;
+  }).join("");
+}
+
+window.selectAdminChat = function(chatKey){
+  selectedAdminChatKey = chatKey;
+  document.getElementById("adminActiveChatPanel").style.display = "block";
+  renderAdminActiveChat();
+};
+
+function renderAdminActiveChat(){
+  const panel = document.getElementById("adminActiveChatPanel");
+  const box = document.getElementById("adminChatMessages");
+  const titleEl = document.getElementById("adminChatTitle");
+  if(!selectedAdminChatKey || !allChats[selectedAdminChatKey]){
+    if(panel) panel.style.display = "none";
+    return;
+  }
+
+  panel.style.display = "block";
+  const chatObj = allChats[selectedAdminChatKey];
+  titleEl.textContent = `محادثة: ${chatObj.userName || selectedAdminChatKey}`;
+
+  const msgs = Object.values(chatObj.messages || {}).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  if(!msgs.length){
+    box.innerHTML = "<small>لا توجد رسائل في هذه المحادثة.</small>";
+    return;
+  }
+
+  box.innerHTML = msgs.map(formatMessageBubble).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+window.sendAdminReply = async function(){
+  if(!selectedAdminChatKey) return;
+  const input = document.getElementById("adminChatInput");
+  const text = input.value.trim();
+  if(!text) return;
+
+  const nowStr = new Date().toLocaleString("ar-EG");
+  const nowTs = Date.now();
+
+  await update(ref(db, `chats/${selectedAdminChatKey}`), {
+    lastMessage: text,
+    updatedAt: nowStr,
+    updatedAtTs: nowTs
+  });
+
+  const msgRef = push(ref(db, `chats/${selectedAdminChatKey}/messages`));
+  await set(msgRef, {
+    sender: "admin",
+    senderName: "الإدارة",
+    context: "رد الإدارة",
+    text,
+    time: nowStr,
+    ts: nowTs
+  });
+
+  input.value = "";
+};
+
+window.sendStructuredDelivery = async function(){
+  if(!selectedAdminChatKey) return;
+  const titleEl = document.getElementById("deliveryTitleInput");
+  const secretEl = document.getElementById("deliverySecretInput");
+  const deliveryTitle = titleEl.value.trim() || "بيانات التسليم";
+  const secretValue = secretEl.value.trim();
+  if(!secretValue){
+    showToast("أدخل البيانات أو الكود المراد إرساله.");
+    return;
+  }
+
+  const nowStr = new Date().toLocaleString("ar-EG");
+  const nowTs = Date.now();
+
+  await update(ref(db, `chats/${selectedAdminChatKey}`), {
+    lastMessage: `${deliveryTitle}: ${secretValue}`,
+    updatedAt: nowStr,
+    updatedAtTs: nowTs
+  });
+
+  const msgRef = push(ref(db, `chats/${selectedAdminChatKey}/messages`));
+  await set(msgRef, {
+    sender: "admin",
+    senderName: "الإدارة",
+    context: "تسليم بيانات",
+    isDelivery: true,
+    deliveryTitle,
+    secretValue,
+    text: `${deliveryTitle}: ${secretValue}`,
+    time: nowStr,
+    ts: nowTs
+  });
+
+  titleEl.value = "";
+  secretEl.value = "";
+  showToast("تم إرسال بطاقة التسليم بنجاح.");
+};
+
+window.openAdminGate = function(){
+  if(isAdminUnlocked){
+    openPage("admin", "لوحة الإدارة");
+    switchAdminSection(activeAdminSection);
+    return;
+  }
+  document.getElementById("adminPassInput").value = "";
+  document.getElementById("adminAuthModal").style.display = "flex";
+};
+
+window.closeAdminAuthModal = function(){
+  document.getElementById("adminAuthModal").style.display = "none";
+};
+
+window.verifyAdminPass = function(){
+  const pass = document.getElementById("adminPassInput").value;
+  if(pass === ADMIN_PASS){
+    isAdminUnlocked = true;
+    sessionStorage.setItem("zaemAdminUnlocked", "true");
+    closeAdminAuthModal();
+    openPage("admin", "لوحة الإدارة");
+    switchAdminSection(activeAdminSection);
+  } else {
+    showToast("كلمة سر الإدارة غير صحيحة.");
+  }
+};
+
+updateSellFeePreview();
+updateAdminFeePreview();
+syncAuthUI();
 </script>
 </body>
 </html>
